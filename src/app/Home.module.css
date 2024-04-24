@@ -1,41 +1,149 @@
-.homeSection {
-    display: flex;
-    justify-content: space-between;
+.imageContainer {
+  position: absolute; /* Positionnement absolu par rapport à son parent relatif */
+  /*top: 55%;  Distance du haut du parent */
+  bottom: 10%;
+  right: 20px; /* Distance du côté droit du parent */
+  width: 50%; /* Largeur du conteneur, ajustez selon vos besoins */
+  height: calc(
+    85% - 40px
+  ); /* Hauteur ajustée pour éviter la superposition avec le footer */
+  overflow: auto; /* Permettre le défilement si le texte est trop long */
+  z-index: -1; /* S'assurer qu'il est inférieur à celui de l'en-tête */
+}
+
+.homeContainer {
+  position: relative;
+  min-height: 100vh; /* Utilisez 100% de la hauteur de la fenêtre */
+  width: 100%; /* Utilisez 100% de la largeur de la fenêtre */
+  /* background-color: #f5b9f1; ou toute autre couleur de fond de votre choix */
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Assurez-vous que l'image reste en arrière-plan */
+}
+
+.textOverlay {
+  position: absolute;
+  bottom: 10%; /* Ajustez selon vos besoins */
+  left: 10%; /* Ajustez selon vos besoins */
+  color: white; /* Contraste avec l'arrière-plan pour une meilleure visibilité */
+  background-color: rgba(
+    92,
+    239,
+    217,
+    0.267
+  ); /* Optionnel: ajoute un fond semi-transparent pour améliorer la lisibilité */
+  width: 80%; /* ou la largeur désirée */
+  padding: 10px;
+  border-radius: 8px;
+}
+@media (max-width: 768px) {
+  .textOverlay {
+    width: 90%; /* Utilisez plus d'espace pour le texte */
+    padding: 15px; /* Augmentez le padding pour une meilleure lisibilité */
   }
-  .homeBody {
-    background-image: ;
-  }
+}
+.textContent {
+  width: 50%;
+  padding: 200px;
+}
+
+.overlayText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+.textContainer {
+  position: absolute;
+  top: 50%; /* Ajuste la position verticale à peu près au milieu de la page */
+  right: 10%; /* Ajuste la position horizontale sur la droite */
+  transform: translateY(-50%);
+  width: 30%; /* Ajustez la largeur selon vos besoins */
+  text-align: right; /* Aligner le texte à droite */
+}
+
+/* .buttonLink {
+  display: block; /* Les liens s'affichent comme des blocs pour remplir le conteneur 
+  margin-top: 10px; /* Espacement entre les boutons 
+  padding: 10px 50px; /* Padding pour les boutons 
+  background-color: #2dd4bf; /* Couleur de fond des boutons 
+  color: white; /* Couleur du texte 
+  text-align: center; /* Centrer le texte dans le bouton 
+  border-radius: 15px; /* Bords arrondis pour le bouton 
+  width: 15%;
+} */
+.buttonLink {
+  /* Styliser vos liens pour ressembler à des boutons, si nécessaire */
+  padding: 10px 20px;
+  bottom: 1px;
+  background-color: #2dd4bf; /* Exemple de couleur de fond */
+  color: white; /* Couleur du texte */
+  text-align: center;
+  text-decoration: none; /* Enlever le soulignement */
+  border-radius: 15px; /* Bordures arrondies pour un look bouton */
+}
+.buttonLink:hover {
+  background-color: #0d9488; /* Changement de couleur au survol */
+}
+/* .footerSection {
+  display: flex;
+  justify-content: center; /* Centrer horizontalement 
+  align-items: center; /* Centrer verticalement dans le footer 
+  gap: 30px; /* Espacement entre les boutons 
+  margin-bottom: 5%;
+  position: absolute; /* Positionnement absolu par rapport à son parent relatif 
+  left: 50%; /* Déplacer à 50% de la largeur du parent 
+  bottom: 0px; /* Distance du bas du parent 
+  transform: translateX(
+    -50%
+  ); /* Centrer exactement au milieu en ajustant à -50% de sa propre largeur 
+} */
+
+.footerSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  position: absolute;
+  left: 50%;
+  bottom: 8px; /* Abaisser les boutons juste au bord inférieur */
+  transform: translateX(-50%);
+  padding: 10px 0; /* Ajouter du padding pour un peu d'espace autour des boutons */
+}
+
+@media (max-width: 768px) {
   .imageContainer {
-    position: relative;
-    width: 1000%;
-    height: 100vh;
+    width: 80%; /* Plus large sur les petits écrans */
+    right: 10%; /* Centrer légèrement */
+    top: 10px; /* Moins d'espace en haut sur les petits écrans */
+    height: 80%; /* Réduire la hauteur pour éviter le chevauchement avec le footer */
   }
-  
-  .textContent {
-    width: 50%;
-    padding: 200px;
+
+  .homeContainer {
+    padding-bottom: 50px; /* Moins d'espace nécessaire en bas pour les petits écrans */
   }
-  
-  .backgroundSection {
-    background-image: url('/images/image2.jpg');
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    height: 80vh;
-  }
-  
-  .overlayText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-  }
-  
-  .footerSection {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
+}
+.container {
+  width: 70%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.carte {
+  width: 800px;
+  text-align: center;
+  row-gap: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  background-color: #0d9488;
+  /* z-index: 10; */
+}
