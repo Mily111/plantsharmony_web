@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-
+// Remplacez les imports depuis 'next/router' par ceux depuis 'next/navigation'
+import { useNavigate } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,16 +14,8 @@ import NavBar from "@/components/NavBar";
 // eslint-disable-next-line @next/next/no-async-client-component
 export default function Home() {
   return (
-    <main>
+    <main className="bg-[url('/images/bgHome.png')] bg-cover bg-no-repeat bg-center">
       <div className={styles.homeContainer}>
-        <Image
-          priority={false} // {false} | {true}
-          src="/images/bgHome.png" // Assurez-vous que le chemin vers l'image est correct
-          alt="Background image"
-          layout="fill"
-          object-fit="contain"
-          className={styles.backgroundImage}
-        />
         <Header />
         <h1
           className="overline"
@@ -32,7 +25,7 @@ export default function Home() {
             left: "57%",
             transform: "translate(-50%, -50%)",
             color: "#10b981",
-            fontSize: "45px",
+            fontSize: "40px",
             fontWeight: "bold",
             zIndex: 2, // Assurez-vous que le texte est au-dessus de l'image de fond
           }}
@@ -40,7 +33,7 @@ export default function Home() {
           Bienvenue dans PlantsHarmony
         </h1>
 
-        <div className={styles.imageContainer}>
+        <div className={styles.pContainer}>
           <p className={styles.textOverlay}>
             PlantsHarmony, là où la passion pour les plantes rencontre la
             technologie pour créer une expérience florale exceptionnelle.

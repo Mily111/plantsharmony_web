@@ -2,7 +2,7 @@
 
 import React from "react";
 import Header from "@/components/Header";
-import Button from "@/app/ui/Button";
+
 // create function to search data
 const getData = async () => {
   const res = await fetch("http://localhost:5000/user");
