@@ -2,7 +2,7 @@
 
 import React from "react";
 // Remplacez les imports depuis 'next/router' par ceux depuis 'next/navigation'
-import { useNavigate } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";

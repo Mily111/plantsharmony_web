@@ -9,10 +9,12 @@ export default function Inscription() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // Ajout pour gérer les messages d'erreur
   const router = useRouter();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    setErrorMessage(""); // Réinitialiser le message d'erreur à chaque soumission
 
     try {
       const response = await fetch("http://localhost:5000/api/users/register", {
@@ -27,15 +29,16 @@ export default function Inscription() {
         }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error(`HTTP status ${response.status}`);
+        throw new Error(data.message || `HTTP status ${response.status}`);
       }
 
-      const data = await response.json();
       console.log("Inscription réussie", data);
       router.push("/connexion"); // Utilisez router.push pour la redirection
     } catch (error) {
       console.error("Échec de l'inscription", error);
+      setErrorMessage(error.message); // Définir le message d'erreur à afficher
     }
   };
 
@@ -46,6 +49,12 @@ export default function Inscription() {
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
           onSubmit={handleSubmit}
         >
+          {/* Affichage des erreurs ici */}
+          {errorMessage && (
+            <div className="mb-4 text-red-500 text-sm text-center">
+              {errorMessage}
+            </div>
+          )}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
