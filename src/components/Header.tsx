@@ -30,6 +30,11 @@ const Header = () => {
             Quelle est ma plante?
           </span>
         </Link>
+        <Link href="/profil" passHref>
+          <span className="cursor-pointer text-teal-600 hover:bg-teal-200 shadow-lg">
+            Informations personnelles
+          </span>
+        </Link>
       </nav>
     </header>
   );

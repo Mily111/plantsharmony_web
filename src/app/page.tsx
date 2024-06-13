@@ -30,7 +30,7 @@ export default function Home() {
             zIndex: 2, // Assurez-vous que le texte est au-dessus de l'image de fond
           }}
         >
-          Bienvenue dans PlantsHarmony
+          Bienvenue chez PlantsHarmony
         </h1>
 
         <div className={styles.pContainer}>

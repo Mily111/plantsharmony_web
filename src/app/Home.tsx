@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./Home.module.css";
 import Header from "@/components/Header";
-import Button from "./ui/Button";
+import Button from "../../ui/Button";
 
 export default function Home() {
   return (
@@ -33,7 +33,7 @@ export default function Home() {
             zIndex: 2, // Assurez-vous que le texte est au-dessus de l'image de fond
           }}
         >
-          Bienvenue dans PlantsHarmony
+          Bienvenue chez PlantsHarmony
         </h1>
         <section className={styles.homeSection}>
           {/* Utilisation du composant Header */}
@@ -76,11 +76,8 @@ export default function Home() {
           </div>
         </section>
         <section className={styles.footerSection}>
-          <Link href="/inscription" className={styles.buttonLink}>
-            Créer un compte
-          </Link>
-          <Link href="/connexion" className={styles.buttonLink}>
-            Se Connecter
+          <Link href="/" className={styles.buttonLink}>
+            Se Deconnecter
           </Link>
         </section>
       </div>
