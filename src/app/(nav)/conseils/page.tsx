@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Header from "@/components/Header";
+import Header from "@/components/PublicHeader";
 
 // create function to search data
 const getData = async () => {

@@ -1,34 +1,25 @@
 "use client";
 
-// src/app/inscription/page.tsx
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Utiliser useRouter depuis next/navigation
-import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
+import { register } from "../../../utils/api";
+import Header from "@/components/PublicHeader";
 
 const Inscription = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter(); // Utiliser useRouter depuis next/navigation
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email_user: email,
-          password_user: password,
-        }),
-      });
+    setErrorMessage(""); // Reset the error message on new submit
 
-      if (!response.ok) {
-        const data = await response.json();
+    try {
+      const data = await register(username, email, password);
+
+      if (!data) {
         throw new Error(data.message || "Registration failed");
       }
 
@@ -40,7 +31,6 @@ const Inscription = () => {
 
   return (
     <div>
-      <Header />
       <div className="flex flex-col items-center justify-center min-h-screen bg-green-100">
         <div className="w-full max-w-xs">
           <form
@@ -72,13 +62,13 @@ const Inscription = () => {
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email_user"
+                htmlFor="email"
               >
                 E-mail
               </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="email_user"
+                id="email"
                 type="email"
                 placeholder="E-mail"
                 value={email}
@@ -89,13 +79,13 @@ const Inscription = () => {
             <div className="mb-6">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="password_user"
+                htmlFor="password"
               >
                 Mot de passe
               </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                id="password_user"
+                id="password"
                 type="password"
                 placeholder="******************"
                 value={password}
@@ -119,123 +109,3 @@ const Inscription = () => {
 };
 
 export default Inscription;
-
-// import React, { useState } from "react";
-// import Link from "next/link";
-// import { useRouter } from "next/navigation"; // Assurez-vous que l'import est correct
-// import styles from "@/app/Home.module.css";
-
-// export default function Inscription() {
-//   const [username, setUsername] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [errorMessage, setErrorMessage] = useState(""); // Ajout pour gérer les messages d'erreur
-//   const router = useRouter();
-
-//   const handleSubmit = async (event: { preventDefault: () => void }) => {
-//     event.preventDefault();
-//     setErrorMessage(""); // Réinitialiser le message d'erreur à chaque soumission
-
-//     try {
-//       const response = await fetch("http://localhost:5000/api/users/register", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           username,
-//           email_user: email,
-//           password_user: password,
-//         }),
-//       });
-
-//       const data = await response.json();
-//       if (!response.ok) {
-//         throw new Error(data.message || `HTTP status ${response.status}`);
-//       }
-
-//       console.log("Inscription réussie", data);
-//       router.push("/connexion"); // Utilisez router.push pour la redirection
-//     } catch (error) {
-//       console.error("Échec de l'inscription", error);
-//       setErrorMessage(error.message); // Définir le message d'erreur à afficher
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen bg-green-100">
-//       <div className="w-full max-w-xs">
-//         <form
-//           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-//           onSubmit={handleSubmit}
-//         >
-//           {/* Affichage des erreurs ici */}
-//           {errorMessage && (
-//             <div className="mb-4 text-red-500 text-sm text-center">
-//               {errorMessage}
-//             </div>
-//           )}
-//           <div className="mb-4">
-//             <label
-//               className="block text-gray-700 text-sm font-bold mb-2"
-//               htmlFor="username"
-//             >
-//               Nom d'utilisateur
-//             </label>
-//             <input
-//               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-//               id="username"
-//               type="text"
-//               placeholder="Nom d'utilisateur"
-//               value={username}
-//               onChange={(e) => setUsername(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="mb-4">
-//             <label
-//               className="block text-gray-700 text-sm font-bold mb-2"
-//               htmlFor="email"
-//             >
-//               Email
-//             </label>
-//             <input
-//               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-//               id="email"
-//               type="email"
-//               placeholder="Email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="mb-6">
-//             <label
-//               className="block text-gray-700 text-sm font-bold mb-2"
-//               htmlFor="password"
-//             >
-//               Mot de passe
-//             </label>
-//             <input
-//               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-//               id="password"
-//               type="password"
-//               placeholder="******************"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="flex items-center justify-between">
-//             {/* <Link href="/connexion" className={styles.buttonLink}>
-//               Creer un compte
-//             </Link> */}
-//             <button type="submit" className={styles.buttonLink}>
-//               Enregistrer
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }

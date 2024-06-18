@@ -16,7 +16,7 @@
   }
 }
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,8 +24,38 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+body {
+  font-family: "Arial, sans-serif";
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+h1,
+h2,
+h3 {
+  color: #1a936f;
 }
 
+a {
+  color: #1a936f;
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+}
+
+img {
+  border-radius: 8px;
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

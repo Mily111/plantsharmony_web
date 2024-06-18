@@ -1,28 +1,25 @@
-.pContainer {
-  position: absolute; /* Positionnement absolu par rapport à son parent relatif */
-  /*top: 55%;  Distance du haut du parent */
-  bottom: 10%;
-  right: 20px; /* Distance du côté droit du parent */
-  width: 50%; /* Largeur du conteneur, ajustez selon vos besoins */
-  height: calc(
-    85% - 40px
-  ); /* Hauteur ajustée pour éviter la superposition avec le footer */
-  overflow: auto; /* Permettre le défilement si le texte est trop long */
-  /*z-index: -1;  S'assurer qu'il est inférieur à celui de l'en-tête */
-}
-
+/* Container principal */
 .homeContainer {
   position: relative;
-  min-height: 100vh; /* Utilisez 100% de la hauteur de la fenêtre */
-  width: 100%; /* Utilisez 100% de la largeur de la fenêtre */
-  /* background-color: #f5b9f1; ou toute autre couleur de fond de votre choix */
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   padding-bottom: 50px; /* Moins d'espace nécessaire en bas pour les petits écrans */
 }
 
-.textOverlay {
+/* Conteneur de texte principal */
+.pContainer {
   position: absolute;
-  bottom: 10%; /* Ajustez selon vos besoins */
-  left: 10%; /* Ajustez selon vos besoins */
+  top: 20%; /* Remontez la position verticale du conteneur de texte */
+  right: 5%; /* Déplacez le conteneur de texte plus à droite */
+  width: 35%; /* Largeur du conteneur, ajustez selon vos besoins */
+  height: 50%; /* Hauteur ajustée pour permettre le défilement */
+  overflow: auto; /* Permettre le défilement si le texte est trop long */
+  z-index: 1; /* Assurez-vous qu'il est inférieur à celui de l'en-tête */
+}
+
+/* Texte en superposition */
+.textOverlay {
   color: rgb(
     10,
     37,
@@ -33,36 +30,43 @@
     239,
     217,
     0.267
-  ); /* Optionnel: ajoute un fond semi-transparent pour améliorer la lisibilité */
-  width: 80%; /* ou la largeur désirée */
+  ); /* Fond semi-transparent pour améliorer la lisibilité */
+  width: 100%; /* ou la largeur désirée */
   padding: 10px;
   border-radius: 15px;
-  z-index: 10; /* Assurez-vous que c'est plus haut que les autres éléments*/
+  z-index: 10; /* Assurez-vous que c'est plus haut que les autres éléments */
 }
+
+/* Adaptation aux petits écrans */
 @media (max-width: 768px) {
   .textOverlay {
-    width: 90%; /* Utilisez plus d'espace pour le texte */
+    width: 100%; /* Utilisez plus d'espace pour le texte */
     padding: 15px; /* Augmentez le padding pour une meilleure lisibilité */
+  }
+  .pContainer {
+    width: 90%; /* Largeur ajustée pour petits écrans */
+    right: 5%;
+    top: 30%; /* Ajustement de la position pour éviter le chevauchement */
   }
 }
 
+/* Liens stylisés comme des boutons */
 .buttonLink {
-  /* Styliser vos liens pour ressembler à des boutons, si nécessaire */
   padding: 10px 20px;
-  bottom: 1px;
   background-color: #2dd4bf; /* Exemple de couleur de fond */
   color: white; /* Couleur du texte */
   text-align: center;
   text-decoration: none; /* Enlever le soulignement */
   border-radius: 15px; /* Bordures arrondies pour un look bouton */
-  /* margin-right: 2px; */
-  margin-left: 8px;
+  margin: 10px 8px; /* Espacement autour des boutons */
   font-size: 13px; /* Taille du texte - ajustez selon vos besoins */
 }
+
 .buttonLink:hover {
   background-color: #0d9488; /* Changement de couleur au survol */
 }
 
+/* Section du pied de page */
 .footerSection {
   display: flex;
   justify-content: center;
@@ -73,30 +77,4 @@
   bottom: 8px; /* Abaisser les boutons juste au bord inférieur */
   transform: translateX(-50%);
   padding: 10px 0; /* Ajouter du padding pour un peu d'espace autour des boutons */
-}
-
-/* @media (max-width: 768px) {
-  .imageContainer {
-    width: 80%; /* Plus large sur les petits écrans 
-    right: 10%; /* Centrer légèrement 
-    top: 10px; /* Moins d'espace en haut sur les petits écrans 
-    height: 80%; /* Réduire la hauteur pour éviter le chevauchement avec le footer 
-  }
-} */
-.container {
-  width: 70%;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.carte {
-  width: 800px;
-  text-align: center;
-  row-gap: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  padding: 10px 20px;
-  background-color: #0d9488;
-  /* z-index: 10; */
 }

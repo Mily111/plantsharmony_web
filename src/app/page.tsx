@@ -1,22 +1,24 @@
 "use client";
-
 import React from "react";
-// Remplacez les imports depuis 'next/router' par ceux depuis 'next/navigation'
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./Home.module.css"; // Assurez-vous de créer un fichier CSS correspondant dans le même dossier ou ajustez le chemin d'importation
-import Header from "@/components/Header";
-import Button from "./ui/Button";
-import NavBar from "@/components/NavBar";
+import styles from "./Home.module.css";
+import { useAuth } from "@/context/AuthContext";
 
-// eslint-disable-next-line @next/next/no-async-client-component
 export default function Home() {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <main className="bg-[url('/images/bgHome.png')] bg-cover bg-no-repeat bg-center">
+    <main className="bg-cover bg-no-repeat bg-center relative">
       <div className={styles.homeContainer}>
-        <Header />
+        <Image
+          priority={false}
+          src="/images/bgHome.png"
+          alt="Background image"
+          layout="fill"
+          objectFit="cover"
+          className={styles.backgroundImage}
+        />
         <h1
           className="overline"
           style={{
@@ -27,13 +29,12 @@ export default function Home() {
             color: "#10b981",
             fontSize: "40px",
             fontWeight: "bold",
-            zIndex: 2, // Assurez-vous que le texte est au-dessus de l'image de fond
+            zIndex: 2,
           }}
         >
           Bienvenue chez PlantsHarmony
         </h1>
-
-        <div className={styles.pContainer}>
+        <section className={styles.pContainer}>
           <p className={styles.textOverlay}>
             PlantsHarmony, là où la passion pour les plantes rencontre la
             technologie pour créer une expérience florale exceptionnelle.
@@ -59,17 +60,23 @@ export default function Home() {
             aux conditions météorologiques, créant ainsi une harmonie parfaite
             entre la nature et votre jardin.
           </p>
-          {/* Le reste du texte */}
-        </div>
-
-        <div className={styles.footerSection}>
-          <Link href="/inscription" className={styles.buttonLink}>
-            Créer un compte
-          </Link>
-          <Link href="/connexion" className={styles.buttonLink}>
-            Se Connecter
-          </Link>
-        </div>
+        </section>
+        <section className={styles.footerSection}>
+          {!isAuthenticated ? (
+            <>
+              <Link href="/inscription" className={styles.buttonLink}>
+                Créer un compte
+              </Link>
+              <Link href="/connexion" className={styles.buttonLink}>
+                Se Connecter
+              </Link>
+            </>
+          ) : (
+            <Link href="/profil" className={styles.buttonLink}>
+              Mon Profil
+            </Link>
+          )}
+        </section>
       </div>
     </main>
   );

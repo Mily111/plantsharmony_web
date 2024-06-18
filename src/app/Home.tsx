@@ -3,8 +3,8 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Home.module.css";
-import Header from "@/components/Header";
-import Button from "../../ui/Button";
+import Header from "@/components/PublicHeader";
+import Button from "../app/ui/Button";
 
 export default function Home() {
   return (
