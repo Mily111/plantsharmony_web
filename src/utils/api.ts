@@ -44,31 +44,44 @@ export async function getProfile(token: string): Promise<any> {
   });
   return response.data;
 }
-
 // Fonction pour récupérer les noms des plantes
 export const fetchPlantNames = async (): Promise<GenericPlant[]> => {
   const response = await axios.get<GenericPlant[]>(
     `${API_URL}/plants/plantsName`
   );
-  return response.data.map((plant) => ({
-    id_plant: plant.id_plant,
-    name_plant: plant.name_plant,
-  }));
-};
+  console.log("API response:", response);
 
+  if (response.data && Array.isArray(response.data)) {
+    const plantMap = response.data.map((plant) => ({
+      id_plant: plant.id, // Utilisez la propriété correcte ici
+      name_plant: plant.name, // Utilisez la propriété correcte ici
+    }));
+    console.log("Mapped plant names:", plantMap);
+    return plantMap;
+  } else {
+    console.error("Unexpected data format:", response.data);
+    throw new Error("Unexpected data format");
+  }
+};
 // Fonction pour ajouter une suggestion de plante
 export const addPlantSuggestion = async (formData: FormData): Promise<any> => {
-  const response = await axios.post(
-    `${API_URL}/plants/plantSuggestion`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-  return response.data;
+  try {
+    const response = await axios.post(
+      `${API_URL}/plants/plantSuggestion`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding plant suggestion:", error);
+    throw error;
+  }
 };
+
 // Fonction pour obtenir toutes les demandes de troc
 export async function getAllTrades(): Promise<Trade[]> {
   try {

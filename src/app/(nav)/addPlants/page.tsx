@@ -50,14 +50,14 @@ export default function AddPlants() {
 
     try {
       const res = await addPlantSuggestion(formData);
-      if (res.message === "Plant suggestion added") {
+      if (res.message === "Plant suggestion added or updated") {
         alert("Plante suggérée ajoutée");
       } else {
         alert("Erreur lors de l'ajout de la plante suggérée");
       }
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la plante suggérée", error);
-      alert("Erreur lors de l'ajout de la plante suggérée");
+      console.error("Erreur ajout plante suggérée", error);
+      alert("Erreur add plante suggérée");
     }
   };
 
