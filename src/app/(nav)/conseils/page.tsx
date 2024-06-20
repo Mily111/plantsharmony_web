@@ -1,40 +1,131 @@
 "use client";
 
-import React from "react";
-import Header from "@/components/PublicHeader";
+import React, { useEffect, useState } from "react";
+import { getAllPlants } from "@/utils/api";
+import { Plant } from "@/types/types";
 
-// create function to search data
-const getData = async () => {
-  const res = await fetch("http://localhost:5000/user");
-  const data = await res.json();
-  return data;
-};
+const PlantAdvice = () => {
+  const [plants, setPlants] = useState<Plant[]>([]);
+  const [selectedPlantId, setSelectedPlantId] = useState<number | null>(null);
+  const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
 
-type User = {
-  Id_user: number;
-  username: string;
-  email_user: string;
-  password_user: string;
-  Id_type_user_rights: number;
-};
-// put async in export default home :
-// eslint-disable-next-line @next/next/no-async-client-component
-export default async function Conseils() {
-  const user = await getData();
+  useEffect(() => {
+    const fetchPlants = async () => {
+      try {
+        const plantData = await getAllPlants();
+        setPlants(plantData);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des données des plantes:",
+          error
+        );
+      }
+    };
+
+    fetchPlants();
+  }, []);
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    if (selectedValue) {
+      const selectedId = parseInt(selectedValue);
+      setSelectedPlantId(selectedId);
+      console.log("Selected Plant ID:", selectedId);
+    } else {
+      setSelectedPlantId(null);
+      console.log("No plant selected");
+    }
+  };
+
+  const handleValidateClick = () => {
+    if (selectedPlantId !== null) {
+      const plant = plants.find((p) => p.id_plant === selectedPlantId);
+      setSelectedPlant(plant || null);
+      console.log("Selected Plant:", plant);
+    } else {
+      console.log("No plant selected");
+    }
+  };
 
   return (
-    <main className="bg-teal-500 text-teal-950">
-      <div>
-        <Header />
-        <div className="container">
-          {user.map((user: User) => (
-            <div key={user.Id_user} className="carte">
-              <h3>{user.username}</h3>
-            </div>
-          ))}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold text-teal-400 mb-4">
+        Conseils Plantes
+      </h1>
+      <div className="mb-4">
+        <label
+          htmlFor="plant-select"
+          className="block text-gray-700 text-sm font-bold mb-2"
+        >
+          Sélectionnez une plante
+        </label>
+        <div className="flex space-x-4">
+          <select
+            id="plant-select"
+            onChange={handleSelectChange}
+            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option value="">Choisir une plante</option>
+            {plants.map((plant) => (
+              <option
+                key={plant.id_plant}
+                value={plant.id_plant?.toString() || ""}
+              >
+                {plant.name_plant}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleValidateClick}
+            className="bg-teal-400 text-white px-4 py-2 rounded shadow hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
+          >
+            Valider
+          </button>
         </div>
-        <button className="btn btn-accent mt-5">Accent</button>
       </div>
-    </main>
+      {selectedPlant && (
+        <div className="mt-4 p-4 bg-white shadow-md rounded-lg">
+          <h2 className="text-xl font-bold text-teal-400 mb-2">
+            {selectedPlant.name_plant}
+          </h2>
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-left">Propriété</th>
+                <th className="px-4 py-2 text-left">Valeur</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border px-4 py-2">Type de plante</td>
+                <td className="border px-4 py-2">
+                  {selectedPlant.plant_type_name}
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-4 py-2">Type de sol</td>
+                <td className="border px-4 py-2">
+                  {selectedPlant.label_soil_type}
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-4 py-2">Niveau d'humidité</td>
+                <td className="border px-4 py-2">
+                  {selectedPlant.humidity_level}
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-4 py-2">Niveau de lumière</td>
+                <td className="border px-4 py-2">
+                  {selectedPlant.light_level}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default PlantAdvice;

@@ -1,6 +1,13 @@
-import { Plant, Trade } from "../types/types";
 import axios from "axios";
-import { GenericPlant, SuggestedPlant } from "../types/types";
+import {
+  User,
+  GenericPlant,
+  Plant,
+  Trade,
+  SuggestedPlant,
+  WeatherData,
+} from "../types/types";
+
 const API_URL = "http://localhost:5000/api"; // Base URL de votre API
 
 // Fonction pour l'authentification
@@ -44,6 +51,38 @@ export async function getProfile(token: string): Promise<any> {
   });
   return response.data;
 }
+
+// Fonction pour mettre à jour le profil utilisateur
+export const updateUser = async (
+  user: Partial<User>,
+  userId: number
+): Promise<any> => {
+  const response = await axios.put(`${API_URL}/users/update/${userId}`, user);
+  return response.data;
+};
+
+// Fonction pour supprimer le compte utilisateur
+export const deleteUser = async (userId: number): Promise<any> => {
+  const response = await axios.delete(`${API_URL}/users/delete/${userId}`);
+  return response.data;
+};
+
+// Fonction pour récupérer les plantes suggérées par l'utilisateur
+export const getUserPlants = async (
+  userId: number
+): Promise<SuggestedPlant[]> => {
+  const response = await axios.get(`${API_URL}/plants/getUserPlant/${userId}`);
+  return response.data;
+};
+
+// Fonction pour supprimer une plante suggérée
+export const deleteSuggestedPlant = async (plantId: number): Promise<any> => {
+  const response = await axios.delete(
+    `${API_URL}/plants/deletetUserPlant${plantId}`
+  );
+  return response.data;
+};
+
 // Fonction pour récupérer les noms des plantes
 export const fetchPlantNames = async (): Promise<GenericPlant[]> => {
   const response = await axios.get<GenericPlant[]>(
@@ -79,6 +118,28 @@ export const addPlantSuggestion = async (formData: FormData): Promise<any> => {
   } catch (error) {
     console.error("Error adding plant suggestion:", error);
     throw error;
+  }
+};
+
+// Fonction pour récupérer les données météo
+export const fetchWeather = async (): Promise<WeatherData> => {
+  try {
+    const response = await axios.get(`${API_URL}/weather/getWeatherData`);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données météo", error);
+    throw new Error("Failed to fetch weather data");
+  }
+};
+
+// Ajoutez cette fonction pour récupérer toutes les plantes
+export const getAllPlants = async (): Promise<Plant[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/plantsAdvice/getAllPlants`);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des plantes:", error);
+    throw new Error("Failed to fetch plants data");
   }
 };
 

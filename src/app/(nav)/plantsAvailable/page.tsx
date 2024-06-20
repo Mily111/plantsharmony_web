@@ -1,10 +1,11 @@
+// pages/plantsAvailable.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAvailableTrades } from "../../../utils/api";
-import Layout from "../../../components/Layout";
-import PlantCard from "../../../components/PlantCard";
-import { Plant } from "../../../types/types";
+import { getAvailableTrades } from "@/utils/api";
+import PlantCard from "@/components/PlantCard";
+import { Plant } from "@/types/types";
+import PublicHeader from "@/components/PublicHeader"; // Importez votre en-tête ici
 
 export default function PlantsAvailable() {
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -26,16 +27,18 @@ export default function PlantsAvailable() {
   }, []);
 
   return (
-    <Layout>
-      <h1 className="text-2xl font-bold mb-4">
-        Plantes disponibles pour échange
-      </h1>
-      {error ? <p className="text-red-500">{error}</p> : null}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plants.map((plant) => (
-          <PlantCard key={plant.Id_plante_suggested} plant={plant} />
-        ))}
+    <div>
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">
+          Plantes disponibles pour échange
+        </h1>
+        {error ? <p className="text-red-500">{error}</p> : null}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {plants.map((plant) => (
+            <PlantCard key={plant.Id_plante_suggested} plant={plant} />
+          ))}
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 }

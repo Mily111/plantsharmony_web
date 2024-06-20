@@ -1,3 +1,11 @@
+// types.ts
+export interface User {
+  id_user: number;
+  username: string;
+  email_user: string;
+  password_user?: string;
+}
+
 // Type pour les plantes génériques
 export interface GenericPlant {
   id_plant: number;
@@ -17,13 +25,18 @@ export interface SuggestedPlant {
 
 // Type pour les plantes avec des informations supplémentaires
 export interface Plant {
-  id_plant: number; // Assurez-vous que cette propriété correspond à votre base de données
+  id_plant?: number; // Assurez-vous que cette propriété correspond à votre base de données
   name_plant: string;
+  plant_type_name: string;
+  label_soil_type: string;
+  humidity_level: string;
+  light_level: string;
   photo?: string;
   state_exchange?: string;
   username?: string;
 }
 
+// Type pour les échanges
 export interface Trade {
   Id_request: number;
   Id_user: number;
@@ -35,4 +48,12 @@ export interface Trade {
   photo?: string;
   name_plant: string;
   username: string;
+}
+
+// Type pour les données météo
+export interface WeatherData {
+  location: string;
+  temperature: string;
+  condition: string;
+  windSpeed: string;
 }

@@ -4,6 +4,29 @@ import {
   faPlus,
   faExchangeAlt,
   faLeaf,
+  faSun,
+  faCloudShowersHeavy,
+  faCloud,
+  faBolt,
+  faSnowflake,
+  faCloudSun,
+  faMapMarkerAlt,
+  faThermometerHalf,
+  faWind,
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faSeedling, faPlus, faExchangeAlt, faLeaf);
+library.add(
+  faSeedling,
+  faPlus,
+  faExchangeAlt,
+  faLeaf,
+  faSun,
+  faCloudShowersHeavy,
+  faCloud,
+  faBolt,
+  faSnowflake,
+  faCloudSun,
+  faMapMarkerAlt,
+  faThermometerHalf,
+  faWind
+);
