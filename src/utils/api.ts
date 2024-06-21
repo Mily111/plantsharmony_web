@@ -6,6 +6,7 @@ import {
   Trade,
   SuggestedPlant,
   WeatherData,
+  UpdateUserRequest,
 } from "../types/types";
 
 const API_URL = "http://localhost:5000/api"; // Base URL de votre API
@@ -51,14 +52,39 @@ export async function getProfile(token: string): Promise<any> {
   });
   return response.data;
 }
+// export async function getProfile(token: string): Promise<any> {
+//   const response = await axios.get(`${API_URL}/users/profil`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   return response.data;
+// }
 
 // Fonction pour mettre à jour le profil utilisateur
 export const updateUser = async (
-  user: Partial<User>,
-  userId: number
-): Promise<any> => {
-  const response = await axios.put(`${API_URL}/users/update/${userId}`, user);
-  return response.data;
+  data: UpdateUserRequest,
+  userId: number,
+  token: string
+) => {
+  console.log("piiiiiiiiiiiiiiiiiiiiiiiiiii"); // Log pour vérifier que la fonction est appelée
+  try {
+    const response = await axios.put(
+      `${API_URL}/users/update/${userId}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      }
+    );
+    console.log("maaaaaaaaaaaaaaa"); // Log pour vérifier que la requête a réussi
+    return response.data;
+  } catch (error) {
+    console.log("Failed to update user", error.response || error.message); // Log pour vérifier les erreurs
+    throw new Error("Failed to update user");
+  }
 };
 
 // Fonction pour supprimer le compte utilisateur

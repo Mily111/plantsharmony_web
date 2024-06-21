@@ -6,6 +6,11 @@ export interface User {
   password_user?: string;
 }
 
+export interface UpdateUserRequest {
+  username?: string;
+  email_user?: string;
+  password_user?: string;
+}
 // Type pour les plantes génériques
 export interface GenericPlant {
   id_plant: number;
@@ -21,6 +26,7 @@ export interface SuggestedPlant {
   state_exchange: string;
   id_user: number;
   id_plant: number;
+  name_plant: string;
 }
 
 // Type pour les plantes avec des informations supplémentaires
