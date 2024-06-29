@@ -1,3 +1,4 @@
+// pages/profil.tsx
 "use client";
 import AuthMiddleware from "@/middleware/authMiddleware";
 import React, { useEffect, useState } from "react";
@@ -7,7 +8,7 @@ import {
   updateUser,
   deleteUser,
   getUserPlants,
-  deleteSuggestedPlant,
+  deleteUserPlant,
 } from "@/utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,6 +20,7 @@ import {
   faKey,
 } from "@fortawesome/free-solid-svg-icons";
 import { SuggestedPlant, User, UpdateUserRequest } from "@/types/types";
+import Carrousel from "@/components/Carrousel";
 
 export default function Profil() {
   const [user, setUser] = useState<User | null>(null);
@@ -161,7 +163,8 @@ export default function Profil() {
     );
     if (confirmDelete) {
       try {
-        await deleteSuggestedPlant(plantId);
+        console.log(`Deleting plant with ID: ${plantId}`); // Log l'ID de la plante
+        await deleteUserPlant(plantId);
         setPlants(
           plants.filter((plant) => plant.id_plante_suggested !== plantId)
         );
@@ -275,38 +278,16 @@ export default function Profil() {
               <FontAwesomeIcon icon={faLeaf} />
               Mes Plantes à troquer
             </h3>
-            {plants.length > 0 ? (
-              plants.map((plant) => (
-                <div
-                  key={plant.id_plante_suggested}
-                  className="flex justify-between items-center mb-2 p-2 bg-gray-100 rounded shadow"
-                >
-                  <div>
-                    <p className="text-gray-900">{plant.name_plant}</p>
-                    <p className="text-gray-600 text-sm">
-                      {plant.quantity_possess}
-                    </p>
-                  </div>
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                    onClick={() => handleDeletePlant(plant.id_plante_suggested)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">Aucune plante suggérée</p>
-            )}
-          </div>
+            <Carrousel plants={plants} handleDeletePlant={handleDeletePlant} />
 
-          <div className="mt-6">
-            <button
-              className="w-full bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => router.push("/")}
-            >
-              Retour au Tableau de Bord
-            </button>
+            <div className="mt-6">
+              <button
+                className="w-full bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => router.push("/")}
+              >
+                Retour au Tableau de Bord
+              </button>
+            </div>
           </div>
         </div>
       </div>

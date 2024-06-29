@@ -52,14 +52,6 @@ export async function getProfile(token: string): Promise<any> {
   });
   return response.data;
 }
-// export async function getProfile(token: string): Promise<any> {
-//   const response = await axios.get(`${API_URL}/users/profil`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   return response.data;
-// }
 
 // Fonction pour mettre à jour le profil utilisateur
 export const updateUser = async (
@@ -67,7 +59,6 @@ export const updateUser = async (
   userId: number,
   token: string
 ) => {
-  console.log("piiiiiiiiiiiiiiiiiiiiiiiiiii"); // Log pour vérifier que la fonction est appelée
   try {
     const response = await axios.put(
       `${API_URL}/users/update/${userId}`,
@@ -79,7 +70,6 @@ export const updateUser = async (
         },
       }
     );
-    console.log("maaaaaaaaaaaaaaa"); // Log pour vérifier que la requête a réussi
     return response.data;
   } catch (error) {
     console.log("Failed to update user", error.response || error.message); // Log pour vérifier les erreurs
@@ -102,10 +92,19 @@ export const getUserPlants = async (
 };
 
 // Fonction pour supprimer une plante suggérée
-export const deleteSuggestedPlant = async (plantId: number): Promise<any> => {
+// export const deleteUserPlant = async (plantId: number): Promise<void> => {
+//   const response = await axios.delete(
+//     `${API_URL}/plants/deleteUserPlant/${plantId}`
+//   );
+//   console.log(`API response: ${response.status}`); // Log la réponse de l'API
+//   return response.data;
+// };
+export const deleteUserPlant = async (plantId: number): Promise<void> => {
+  console.log(`Calling delete API for plant ID: ${plantId}`); // Log pour vérifier l'ID de la plante
   const response = await axios.delete(
-    `${API_URL}/plants/deletetUserPlant${plantId}`
+    `${API_URL}/plants/deleteUserPlant/${plantId}`
   );
+  console.log(`API response: ${response.status}`); // Log la réponse de l'API
   return response.data;
 };
 

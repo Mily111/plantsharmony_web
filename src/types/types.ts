@@ -11,6 +11,7 @@ export interface UpdateUserRequest {
   email_user?: string;
   password_user?: string;
 }
+
 // Type pour les plantes génériques
 export interface GenericPlant {
   id_plant: number;
@@ -62,4 +63,10 @@ export interface WeatherData {
   temperature: string;
   condition: string;
   windSpeed: string;
+}
+
+// Interface pour les propriétés du carrousel
+export interface CarrouselProps {
+  plants: SuggestedPlant[];
+  handleDeletePlant: (plantId: number) => void;
 }
