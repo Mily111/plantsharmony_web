@@ -1,6 +1,32 @@
 describe("Inscription", () => {
+  const testUser = {
+    username: "testuser",
+    email: "test@example.com",
+    password: "Password123!",
+  };
+  let userId: number | null = null; // Typage explicite pour userId
+
   beforeEach(() => {
     cy.visit("http://localhost:3000/inscription"); // Remplacez par l'URL correcte de votre application
+  });
+
+  afterEach(() => {
+    // Suppression de l'utilisateur de test après chaque test
+    if (userId) {
+      cy.request({
+        method: "DELETE",
+        url: `http://localhost:5000/api/users/delete/${userId}`, // Assurez-vous que l'URL est correcte
+        failOnStatusCode: false, // Ne pas échouer si l'utilisateur n'est pas trouvé
+      }).then((response) => {
+        // Vous pouvez ajouter des assertions ici pour vérifier que la suppression s'est bien passée
+        if (response.status === 404) {
+          cy.log("User not found, probably already deleted");
+        } else {
+          expect(response.status).to.eq(200);
+        }
+        userId = null; // Réinitialiser l'identifiant de l'utilisateur après la suppression
+      });
+    }
   });
 
   it("should display the registration form", () => {
@@ -29,6 +55,8 @@ describe("Inscription", () => {
     cy.get('input[placeholder="E-mail"]').type("test@example.com");
     cy.get('input[placeholder="******************"]').type("short");
     cy.get("button").contains("Inscription").click();
+
+    // Attendre que le message d'erreur apparaisse
     cy.get("body").then(($body) => {
       if ($body.find(".error-message").length > 0) {
         cy.get(".error-message").should(
@@ -42,19 +70,25 @@ describe("Inscription", () => {
   });
 
   it("should successfully register a user", () => {
-    // Simuler une réponse de succès de l'API
     cy.intercept("POST", "/api/users/register", {
       statusCode: 201,
-      body: { message: "User registered successfully" },
+      body: { message: "User registered successfully", userId: 1 }, // Ajouter userId dans la réponse
     }).as("registerUser");
 
-    cy.get('input[placeholder="Nom d\'utilisateur"]').type("testuser");
-    cy.get('input[placeholder="E-mail"]').type("test@example.com");
-    cy.get('input[placeholder="******************"]').type("Password123!");
+    cy.get('input[placeholder="Nom d\'utilisateur"]').type(testUser.username);
+    cy.get('input[placeholder="E-mail"]').type(testUser.email);
+    cy.get('input[placeholder="******************"]').type(testUser.password);
     cy.get("button").contains("Inscription").click();
 
-    // Attendre que l'appel API soit terminé
-    cy.wait("@registerUser");
+    cy.wait("@registerUser").then((interception) => {
+      if (interception.response) {
+        const response = interception.response.body;
+        expect(response.message).to.eq("User registered successfully");
+        userId = response.userId; // Stocker l'identifiant de l'utilisateur
+      } else {
+        cy.log("Interception sans réponse");
+      }
+    });
 
     cy.contains("User registered successfully", { timeout: 10000 }).should(
       "be.visible"
@@ -62,7 +96,6 @@ describe("Inscription", () => {
   });
 
   it("should handle registration failure", () => {
-    // Simuler une défaillance de l'inscription en utilisant un email déjà utilisé par exemple
     cy.intercept("POST", "/api/users/register", {
       statusCode: 409,
       body: { message: "Username or email already exists" },
@@ -73,9 +106,7 @@ describe("Inscription", () => {
     cy.get('input[placeholder="******************"]').type("Password123!");
     cy.get("button").contains("Inscription").click();
 
-    // Attendre que l'appel API échoue
     cy.wait("@registerUserFail");
-
     cy.contains("Username or email already exists", { timeout: 10000 }).should(
       "be.visible"
     );
