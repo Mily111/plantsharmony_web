@@ -35,13 +35,49 @@ export async function register(
   email: string,
   password: string
 ): Promise<any> {
-  const response = await axios.post(`${API_URL}/users/register`, {
-    username,
-    email_user: email,
-    password_user: password,
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}/users/register`, {
+      username,
+      email_user: email,
+      password_user: password,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Erreurs de réponse de l'API
+        throw new Error(
+          `API error: ${error.response.status} ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else if (error.request) {
+        // Erreurs de requête sans réponse
+        throw new Error("No response received from the API");
+      } else {
+        // Autres erreurs
+        throw new Error(`Error: ${error.message}`);
+      }
+    } else {
+      // Erreurs non Axios
+      throw new Error(`Unexpected error: ${error}`);
+    }
+  }
 }
+
+// Fonction pour l'inscription
+// export async function register(
+//   username: string,
+//   email: string,
+//   password: string
+// ): Promise<any> {
+//   const response = await axios.post(`${API_URL}/users/register`, {
+//     username,
+//     email_user: email,
+//     password_user: password,
+//   });
+//   return response.data;
+// }
 
 // Fonction pour obtenir le profil utilisateur
 export async function getProfile(token: string): Promise<any> {

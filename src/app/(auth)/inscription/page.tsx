@@ -3,7 +3,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "../../../utils/api";
-import PublicHeader from "@/components/PublicHeader";
 import { useAuth } from "@/context/AuthContext";
 
 const Inscription: React.FC = () => {
@@ -63,27 +62,18 @@ const Inscription: React.FC = () => {
       setTimeout(() => {
         router.push("/connexion");
       }, 2000);
-    } catch (err: any) {
-      if (err.response) {
-        if (err.response.status === 409) {
-          setErrorMessage("Username or email already exists");
-        } else if (
-          err.response.status === 400 &&
-          err.response.data.message === "Invalid email format"
-        ) {
-          setErrorMessage("Invalid email format");
-        } else {
-          setErrorMessage("Registration failed");
-        }
+    } catch (err: unknown) {
+      console.error(err); // Log the error to understand the issue better
+      if (err instanceof Error) {
+        setErrorMessage(err.message || "An error occurred");
       } else {
-        setErrorMessage("An error occurred");
+        setErrorMessage("An unknown error occurred");
       }
     }
   };
 
   return (
     <div>
-      <PublicHeader />
       {isClient && (
         <div className="flex flex-col items-center justify-center min-h-screen bg-green-100">
           <div className="w-full max-w-xs">
