@@ -7,7 +7,7 @@ import {
   SuggestedPlant,
   WeatherData,
   UpdateUserRequest,
-} from "../types/types";
+} from "@/types/types";
 
 const API_URL = "http://localhost:5000/api"; // Base URL de votre API
 
@@ -65,20 +65,6 @@ export async function register(
   }
 }
 
-// Fonction pour l'inscription
-// export async function register(
-//   username: string,
-//   email: string,
-//   password: string
-// ): Promise<any> {
-//   const response = await axios.post(`${API_URL}/users/register`, {
-//     username,
-//     email_user: email,
-//     password_user: password,
-//   });
-//   return response.data;
-// }
-
 // Fonction pour obtenir le profil utilisateur
 export async function getProfile(token: string): Promise<any> {
   const response = await axios.get(`${API_URL}/users/profil`, {
@@ -127,14 +113,28 @@ export const getUserPlants = async (
   return response.data;
 };
 
-// Fonction pour supprimer une plante suggérée
-// export const deleteUserPlant = async (plantId: number): Promise<void> => {
-//   const response = await axios.delete(
-//     `${API_URL}/plants/deleteUserPlant/${plantId}`
-//   );
-//   console.log(`API response: ${response.status}`); // Log la réponse de l'API
-//   return response.data;
-// };
+export const getAvailablePlants = async (): Promise<SuggestedPlant[]> => {
+  try {
+    const response = await axios.get<SuggestedPlant[]>(
+      `${API_URL}/plants/available`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des échanges disponibles:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des données"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
 export const deleteUserPlant = async (plantId: number): Promise<void> => {
   console.log(`Calling delete API for plant ID: ${plantId}`); // Log pour vérifier l'ID de la plante
   const response = await axios.delete(
@@ -237,18 +237,40 @@ export async function updateTradeRequest(
 }
 
 // Fonction pour obtenir les plantes disponibles pour le troc
-export async function getAvailableTrades(): Promise<Plant[]> {
+// export async function getAvailableTrades(): Promise<Plant[]> {
+//   try {
+//     const response = await axios.get(`${API_URL}/trades/available`);
+//     return response.data;
+//   } catch (error) {
+//     console.error(
+//       "Erreur lors de la récupération des plantes disponibles",
+//       error
+//     );
+//     throw error;
+//   }
+// }
+export const getAvailableTrades = async (): Promise<SuggestedPlant[]> => {
   try {
-    const response = await axios.get(`${API_URL}/trades/available`);
+    const response = await axios.get<SuggestedPlant[]>(
+      `${API_URL}/plants/plantSuggestion`
+    );
     return response.data;
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des plantes disponibles",
-      error
-    );
-    throw error;
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des échanges disponibles:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des données"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
-}
+};
 
 // Fonction pour supprimer une demande d'échange
 export async function deleteTradeRequest(id: number): Promise<any> {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Plant } from "../types/types";
-import { PlantCardProps } from "../types/types";
+import { PlantCardProps } from "@/types/types";
 
 // interface PlantCardProps {
 //   plant: Plant;

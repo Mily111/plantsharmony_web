@@ -21,6 +21,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { SuggestedPlant, User, UpdateUserRequest } from "@/types/types";
 import Carrousel from "@/components/Carrousel";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Profil() {
   const [user, setUser] = useState<User | null>(null);
@@ -32,6 +33,7 @@ export default function Profil() {
     email_user: "",
     password_user: "",
   });
+  const { logout } = useAuth(); // Assurez-vous d'utiliser useAuth ici
   const router = useRouter();
 
   useEffect(() => {
@@ -148,6 +150,7 @@ export default function Profil() {
         if (user && user.id_user) {
           await deleteUser(user.id_user);
           alert("Compte supprimé avec succès !");
+          logout(); // Appel de la fonction de déconnexion après suppression
           router.push("/"); // Redirect to home page after deletion
         }
       } catch (error) {
