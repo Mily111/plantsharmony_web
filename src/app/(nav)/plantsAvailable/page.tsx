@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { getAvailableTrades } from "@/utils/api";
 import PlantCard from "@/components/PlantCard";
 import { Plant } from "@/types/types";
-import PublicHeader from "@/components/PublicHeader"; // Importez votre en-tête ici
 
 export default function PlantsAvailable() {
   const [plants, setPlants] = useState<Plant[]>([]);

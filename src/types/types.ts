@@ -70,3 +70,13 @@ export interface CarrouselProps {
   plants: SuggestedPlant[];
   handleDeletePlant: (plantId: number) => void;
 }
+
+export interface PlantCardProps {
+  plant: {
+    Id_plante_suggested: number;
+    name_plant: string;
+    photo: string;
+    state_exchange: string;
+    username: string;
+  };
+}
