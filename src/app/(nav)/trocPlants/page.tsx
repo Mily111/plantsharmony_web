@@ -5,20 +5,21 @@
 // import {
 //   getAvailablePlantsForTrade,
 //   getAvailablePlantsForUser,
-//   createTradeRequest,
+//   requestTrade,
+//   createNotification,
 // } from "@/utils/api";
 // import { SuggestedPlant } from "@/types/types";
 // import Image from "next/image";
 // import { useAuth } from "@/context/AuthContext";
-// import TradeRequestModal from "@/components/TradeRequestModal"; // Assurez-vous que le chemin est correct
+// import TradeRequestModal from "@/components/TradeRequestModal";
 
 // export default function TrocPlants() {
 //   const [plants, setPlants] = useState<SuggestedPlant[]>([]);
 //   const [userPlants, setUserPlants] = useState<SuggestedPlant[]>([]);
-//   const [modalVisible, setModalVisible] = useState(false);
 //   const [selectedPlant, setSelectedPlant] = useState<SuggestedPlant | null>(
 //     null
 //   );
+//   const [modalVisible, setModalVisible] = useState(false);
 //   const [error, setError] = useState<string | null>(null);
 //   const { userId } = useAuth(); // Assurez-vous que vous avez accès à l'ID utilisateur
 
@@ -28,39 +29,80 @@
 //         console.log("Plants data: ", data); // Ajoutez ce log
 //         setPlants(data);
 //       })
-//       .catch((err) => {
+//       .catch((err: any) => {
 //         console.error(
 //           "Erreur lors de la récupération des plantes disponibles:",
-//           err
+//           err.message
 //         );
 //         setError(err.message);
 //       });
 
 //     if (userId) {
 //       getAvailablePlantsForUser(userId)
-//         .then((data) => setUserPlants(data))
-//         .catch((error) => console.error(error));
+//         .then((data) => {
+//           console.log("User Plants data: ", data); // Ajoutez ce log
+//           setUserPlants(data);
+//         })
+//         .catch((error: any) => console.error(error.message));
 //     }
 //   }, [userId]);
 
-//   const handleRequestTrade = async (offeredPlantId: number) => {
+//   const handleRequestTrade = async (requestedPlantId: number) => {
 //     if (!selectedPlant) {
 //       alert("Veuillez sélectionner une de vos plantes pour l'échange");
 //       return;
 //     }
 //     try {
-//       const res = await createTradeRequest({
-//         requestedPlantId: selectedPlant.id_plante_suggested,
+//       if (!userId) {
+//         alert("Erreur : utilisateur non authentifié.");
+//         return;
+//       }
+//       const res = await requestTrade({
+//         requestedPlantId,
 //         userId,
-//         offeredPlantId,
+//         offeredPlantId: selectedPlant.id_plante_suggested,
 //       });
 //       if (res.message === "Trade offer created successfully") {
 //         alert("Demande de troc envoyée avec succès");
 //       } else {
 //         alert("Erreur lors de la création de la demande de troc");
 //       }
-//     } catch (error) {
-//       console.error("Error requesting trade:", error);
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
+//       alert("Erreur lors de la demande de troc");
+//     }
+//   };
+
+//   const handleModalSubmit = async (offeredPlantId: number) => {
+//     if (!userId) {
+//       alert("Erreur : utilisateur non authentifié.");
+//       return;
+//     }
+//     try {
+//       const res = await requestTrade({
+//         requestedPlantId: selectedPlant!.id_plante_suggested,
+//         userId,
+//         offeredPlantId,
+//       });
+//       if (res.message === "Trade offer created successfully") {
+//         // Créer une notification après la création de l'offre de troc
+//         const offeredPlantName = userPlants.find(
+//           (p) => p.id_plante_suggested === offeredPlantId
+//         )?.name_plant;
+//         const requestedPlantName = selectedPlant?.name_plant;
+//         const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
+//         await createNotification({
+//           userId: selectedPlant!.id_user, // Utilisez 'id_user' au lieu de 'Id_user'
+//           message: notificationMessage,
+//           tradeOfferId: res.tradeOfferId,
+//         });
+//         alert("Demande de troc envoyée avec succès");
+//         setModalVisible(false);
+//       } else {
+//         alert("Erreur lors de la création de la demande de troc");
+//       }
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
 //       alert("Erreur lors de la demande de troc");
 //     }
 //   };
@@ -104,14 +146,15 @@
 //         <TradeRequestModal
 //           visible={modalVisible}
 //           onCancel={() => setModalVisible(false)}
-//           onSubmit={handleRequestTrade}
+//           onSubmit={handleModalSubmit}
+//           userId={userId as number}
 //           userPlants={userPlants}
-//           userId={userId} // Assurez-vous de passer userId ici
 //         />
 //       </div>
 //     </AuthMiddleware>
 //   );
 // }
+
 "use client";
 
 import AuthMiddleware from "@/middleware/authMiddleware";
@@ -120,6 +163,7 @@ import {
   getAvailablePlantsForTrade,
   getAvailablePlantsForUser,
   requestTrade,
+  createNotification,
 } from "@/utils/api";
 import { SuggestedPlant } from "@/types/types";
 import Image from "next/image";
@@ -134,18 +178,18 @@ export default function TrocPlants() {
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { userId } = useAuth(); // Assurez-vous que vous avez accès à l'ID utilisateur
+  const { userId } = useAuth();
 
   useEffect(() => {
     getAvailablePlantsForTrade()
       .then((data) => {
-        console.log("Plants data: ", data); // Ajoutez ce log
+        console.log("Plants data: ", data);
         setPlants(data);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(
           "Erreur lors de la récupération des plantes disponibles:",
-          err
+          err.message
         );
         setError(err.message);
       });
@@ -153,7 +197,7 @@ export default function TrocPlants() {
     if (userId) {
       getAvailablePlantsForUser(userId)
         .then((data) => setUserPlants(data))
-        .catch((error) => console.error(error));
+        .catch((error: any) => console.error(error.message));
     }
   }, [userId]);
 
@@ -177,8 +221,8 @@ export default function TrocPlants() {
       } else {
         alert("Erreur lors de la création de la demande de troc");
       }
-    } catch (error) {
-      console.error("Error requesting trade:", error);
+    } catch (error: any) {
+      console.error("Error requesting trade:", error.message);
       alert("Erreur lors de la demande de troc");
     }
   };
@@ -195,13 +239,23 @@ export default function TrocPlants() {
         offeredPlantId,
       });
       if (res.message === "Trade offer created successfully") {
+        const offeredPlantName = userPlants.find(
+          (p) => p.id_plante_suggested === offeredPlantId
+        )?.name_plant;
+        const requestedPlantName = selectedPlant?.name_plant;
+        const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
+        await createNotification({
+          userId: selectedPlant!.id_user,
+          message: notificationMessage,
+          tradeOfferId: res.tradeOfferId,
+        });
         alert("Demande de troc envoyée avec succès");
         setModalVisible(false);
       } else {
         alert("Erreur lors de la création de la demande de troc");
       }
-    } catch (error) {
-      console.error("Error requesting trade:", error);
+    } catch (error: any) {
+      console.error("Error requesting trade:", error.message);
       alert("Erreur lors de la demande de troc");
     }
   };

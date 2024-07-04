@@ -8,6 +8,7 @@ import {
   SuggestedPlant,
   WeatherData,
   UpdateUserRequest,
+  Notification,
 } from "@/types/types";
 
 const API_URL = "http://localhost:5000/api"; // Base URL de votre API
@@ -94,7 +95,7 @@ export const updateUser = async (
       }
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.log("Failed to update user", error.response || error.message); // Log pour vérifier les erreurs
     throw new Error("Failed to update user");
   }
@@ -120,7 +121,7 @@ export const getAvailablePlants = async (): Promise<SuggestedPlant[]> => {
       `${API_URL}/plants/available`
     );
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error(
         "Erreur lors de la récupération des échanges disponibles:",
@@ -137,7 +138,7 @@ export const getAvailablePlants = async (): Promise<SuggestedPlant[]> => {
   }
 };
 
-// Ajoutez cette fonction pour récupérer les plantes disponibles pour le troc
+// Fonction pour obtenir les plantes disponibles pour les échanges
 export const getAvailablePlantsForTrade = async (): Promise<
   SuggestedPlant[]
 > => {
@@ -146,10 +147,10 @@ export const getAvailablePlantsForTrade = async (): Promise<
       `${API_URL}/trades/available`
     );
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error(
-        "Erreur lors de la récupération des échanges disponibles:",
+        "Erreur lors de la récupération des plantes disponibles:",
         error.message
       );
       throw new Error(
@@ -163,6 +164,7 @@ export const getAvailablePlantsForTrade = async (): Promise<
   }
 };
 
+// Fonction pour obtenir les plantes disponibles pour un utilisateur
 export const getAvailablePlantsForUser = async (
   userId: number
 ): Promise<SuggestedPlant[]> => {
@@ -189,7 +191,7 @@ export const getAvailablePlantsForUser = async (
 };
 
 // Fonction pour envoyer une demande de troc
-export const createTradeRequest = async (tradeData: {
+export const requestTrade = async (tradeData: {
   requestedPlantId: number;
   userId: number;
   offeredPlantId: number;
@@ -210,25 +212,7 @@ export const createTradeRequest = async (tradeData: {
   }
 };
 
-export const requestTrade = async (tradeData: {
-  requestedPlantId: number;
-  userId: number;
-  offeredPlantId: number;
-}): Promise<any> => {
-  try {
-    const response = await axios.post(`${API_URL}/trades/request`, tradeData);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Erreur lors de la demande de troc:", error.message);
-      throw new Error(
-        error.response?.data?.message || "Erreur lors de la demande de troc"
-      );
-    } else {
-      throw new Error("Erreur inconnue");
-    }
-  }
-};
+// Fonction pour supprimer une plante utilisateur
 export const deleteUserPlant = async (plantId: number): Promise<void> => {
   console.log(`Calling delete API for plant ID: ${plantId}`); // Log pour vérifier l'ID de la plante
   const response = await axios.delete(
@@ -270,9 +254,20 @@ export const addPlantSuggestion = async (formData: FormData): Promise<any> => {
       }
     );
     return response.data;
-  } catch (error) {
-    console.error("Error adding plant suggestion:", error);
-    throw error;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de l'ajout de la suggestion de plante:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de l'ajout de la suggestion de plante"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
 };
 
@@ -281,9 +276,20 @@ export const fetchWeather = async (): Promise<WeatherData> => {
   try {
     const response = await axios.get(`${API_URL}/weather/getWeatherData`);
     return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des données météo", error);
-    throw new Error("Failed to fetch weather data");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des données météo:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des données météo"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
 };
 
@@ -292,9 +298,20 @@ export const getAllPlants = async (): Promise<Plant[]> => {
   try {
     const response = await axios.get(`${API_URL}/plantsAdvice/getAllPlants`);
     return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des plantes:", error);
-    throw new Error("Failed to fetch plants data");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des plantes:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des plantes"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
 };
 
@@ -303,9 +320,20 @@ export async function getAllTrades(): Promise<Trade[]> {
   try {
     const response = await axios.get(`${API_URL}/trades`);
     return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des échanges", error);
-    throw error;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des échanges:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des échanges"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
 }
 
@@ -321,62 +349,42 @@ export async function updateTradeRequest(
       },
     });
     return response.data;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la mise à jour de la demande d'échange",
-      error
-    );
-    throw error;
-  }
-}
-
-// Fonction pour obtenir les plantes disponibles pour le troc
-// export async function getAvailableTrades(): Promise<Plant[]> {
-//   try {
-//     const response = await axios.get(`${API_URL}/trades/available`);
-//     return response.data;
-//   } catch (error) {
-//     console.error(
-//       "Erreur lors de la récupération des plantes disponibles",
-//       error
-//     );
-//     throw error;
-//   }
-// }
-export const getAvailableTrades = async (): Promise<SuggestedPlant[]> => {
-  try {
-    const response = await axios.get<SuggestedPlant[]>(
-      `${API_URL}/plants/plantSuggestion`
-    );
-    return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error(
-        "Erreur lors de la récupération des échanges disponibles:",
+        "Erreur lors de la mise à jour de la demande d'échange:",
         error.message
       );
       throw new Error(
         error.response?.data?.message ||
-          "Erreur lors de la récupération des données"
+          "Erreur lors de la mise à jour de la demande d'échange"
       );
     } else {
       console.error("Erreur inconnue:", error);
       throw new Error("Erreur inconnue");
     }
   }
-};
+}
 
 // Fonction pour supprimer une demande d'échange
 export async function deleteTradeRequest(id: number): Promise<any> {
   try {
     const response = await axios.delete(`${API_URL}/trades/${id}`);
     return response.data;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la suppression de la demande d'échange",
-      error
-    );
-    throw error;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la suppression de la demande d'échange:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la suppression de la demande d'échange"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
   }
 }
 
@@ -421,6 +429,85 @@ export const getMessagesForUser = async (
       throw new Error(
         error.response?.data?.message ||
           "Erreur lors de la récupération des messages"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Fonction pour créer une notification
+export const createNotification = async (notificationData: {
+  userId: number;
+  message: string;
+  tradeOfferId: number;
+}): Promise<any> => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/notifications/create`,
+      notificationData
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la création de la notification:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la création de la notification"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Fonction pour récupérer les notifications pour un utilisateur
+export const getNotificationsForUser = async (
+  userId: number
+): Promise<Notification[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/notifications/user/${userId}`);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des notifications:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des notifications"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Fonction pour marquer une notification comme lue
+export const markNotificationAsRead = async (
+  notificationId: number
+): Promise<any> => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/trades/notifications/read/${notificationId}`
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors du marquage de la notification comme lue:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors du marquage de la notification comme lue"
       );
     } else {
       console.error("Erreur inconnue:", error);

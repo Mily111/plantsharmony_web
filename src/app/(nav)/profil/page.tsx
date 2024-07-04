@@ -25,6 +25,7 @@ import Carrousel from "@/components/Carrousel";
 import { useAuth } from "@/context/AuthContext";
 import MessageList from "@/components/MessageList";
 import MessageForm from "@/components/MessageForm";
+import NotificationList from "@/components/NotificationList";
 
 export default function Profil() {
   const [user, setUser] = useState<User | null>(null);
@@ -298,6 +299,7 @@ export default function Profil() {
 
           {/* Ajoutez les composants de messagerie */}
           <div className="mt-8">
+            <NotificationList />
             <h3 className="text-xl font-bold mb-4 text-teal-500">
               <FontAwesomeIcon icon={faComments} />
               Mes Messages
