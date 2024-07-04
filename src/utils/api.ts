@@ -4,6 +4,7 @@ import {
   GenericPlant,
   Plant,
   Trade,
+  Message,
   SuggestedPlant,
   WeatherData,
   UpdateUserRequest,
@@ -131,6 +132,99 @@ export const getAvailablePlants = async (): Promise<SuggestedPlant[]> => {
       );
     } else {
       console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Ajoutez cette fonction pour récupérer les plantes disponibles pour le troc
+export const getAvailablePlantsForTrade = async (): Promise<
+  SuggestedPlant[]
+> => {
+  try {
+    const response = await axios.get<SuggestedPlant[]>(
+      `${API_URL}/trades/available`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des échanges disponibles:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des données"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+export const getAvailablePlantsForUser = async (
+  userId: number
+): Promise<SuggestedPlant[]> => {
+  try {
+    const response = await axios.get<SuggestedPlant[]>(
+      `${API_URL}/trades/availablePlantsForUser/${userId}`
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des échanges disponibles pour l'utilisateur:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des données"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Fonction pour envoyer une demande de troc
+export const createTradeRequest = async (tradeData: {
+  requestedPlantId: number;
+  userId: number;
+  offeredPlantId: number;
+}): Promise<any> => {
+  try {
+    const response = await axios.post(`${API_URL}/trades/request`, tradeData);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de la demande de troc:", error.message);
+      throw new Error(
+        error.response?.data?.message || "Erreur lors de la demande de troc"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+export const requestTrade = async (tradeData: {
+  requestedPlantId: number;
+  userId: number;
+  offeredPlantId: number;
+}): Promise<any> => {
+  try {
+    const response = await axios.post(`${API_URL}/trades/request`, tradeData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de la demande de troc:", error.message);
+      throw new Error(
+        error.response?.data?.message || "Erreur lors de la demande de troc"
+      );
+    } else {
       throw new Error("Erreur inconnue");
     }
   }
@@ -285,3 +379,52 @@ export async function deleteTradeRequest(id: number): Promise<any> {
     throw error;
   }
 }
+
+// Fonction pour créer un message
+export const createMessage = async (messageData: {
+  senderId: number;
+  receiverId: number;
+  content: string;
+  tradeId?: number;
+}): Promise<any> => {
+  try {
+    const response = await axios.post(`${API_URL}/messages`, messageData);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de l'envoi du message:", error.message);
+      throw new Error(
+        error.response?.data?.message || "Erreur lors de l'envoi du message"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};
+
+// Fonction pour récupérer les messages pour un utilisateur
+export const getMessagesForUser = async (
+  userId: number
+): Promise<Message[]> => {
+  try {
+    const response = await axios.get<Message[]>(
+      `${API_URL}/messages/user/${userId}`
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la récupération des messages:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la récupération des messages"
+      );
+    } else {
+      console.error("Erreur inconnue:", error);
+      throw new Error("Erreur inconnue");
+    }
+  }
+};

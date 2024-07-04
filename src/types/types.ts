@@ -181,3 +181,33 @@ export const convertPlantToSuggestedPlant = (plant: Plant): SuggestedPlant => {
     name_plant: plant.name_plant,
   };
 };
+
+export interface Trade {
+  Id_request: number;
+  requestedPlantId: number;
+  userId: number;
+  offeredPlantId: number;
+  status: string;
+  offered_photo: string;
+  requested_photo: string;
+  offered_name: string;
+  requested_name: string;
+}
+
+export interface TradeRequestModalProps {
+  visible: boolean;
+  onCancel: () => void;
+  onSubmit: (offeredPlantId: number) => Promise<void>;
+  userPlants: SuggestedPlant[];
+  userId: number; // Assurez-vous que cette propriété est présente
+}
+
+export interface Message {
+  id: number;
+  sender_id: number;
+  receiver_id: number;
+  content: string;
+  trade_id?: number;
+  date_sent: string;
+  sender_username: string;
+}
