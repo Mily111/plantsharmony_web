@@ -133,6 +133,6 @@ export interface Notification {
   id: number;
   user_id: number;
   message: string;
-  trade_offer_id: number;
+  trade_offer_id: number | null;
   read_status: boolean;
 }

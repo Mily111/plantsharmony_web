@@ -1,70 +1,119 @@
-// // components/NotificationList.tsx
-
 // import React, { useEffect, useState } from "react";
-// import { getNotificationsForUser, markNotificationAsRead } from "@/utils/api";
+// import {
+//   getNotificationsForUser,
+//   markNotificationAsRead,
+//   updateTradeStatus,
+//   sendNotification,
+// } from "@/utils/api";
 // import { useAuth } from "@/context/AuthContext";
 // import { Notification } from "@/types/types";
 
-// const NotificationList = () => {
-//   const [notifications, setNotifications] = useState<Notification[]>([]);
+// const NotificationList: React.FC = () => {
 //   const { userId } = useAuth();
+//   const [notifications, setNotifications] = useState<Notification[]>([]);
 
 //   useEffect(() => {
 //     if (userId) {
 //       getNotificationsForUser(userId)
-//         .then((data) => setNotifications(data))
-//         .catch((error) =>
-//           console.error(
-//             "Erreur lors de la récupération des notifications:",
-//             error
-//           )
-//         );
+//         .then(setNotifications)
+//         .catch(console.error);
 //     }
 //   }, [userId]);
 
 //   const handleMarkAsRead = async (notificationId: number) => {
+//     console.log(`Marking notification ${notificationId} as read`); // Debug log
 //     try {
 //       await markNotificationAsRead(notificationId);
+//       if (userId) {
+//         await sendNotification({
+//           userId,
+//           message: `Notification ${notificationId} reçue et lue.`,
+//           tradeOfferId: null,
+//         });
+//       }
+//       setNotifications(notifications.filter((n) => n.id !== notificationId));
+//     } catch (error) {
+//       console.error("Error marking notification as read:", error);
+//     }
+//   };
+
+//   const handleAcceptTrade = async (tradeOfferId: number) => {
+//     console.log(`Accepting trade offer ${tradeOfferId}`); // Debug log
+//     try {
+//       await updateTradeStatus(tradeOfferId, "accepted");
+//       if (userId) {
+//         await sendNotification({
+//           userId,
+//           message: `L'utilisateur ${userId} a accepté la demande de troc.`,
+//           tradeOfferId,
+//         });
+//       }
 //       setNotifications(
-//         notifications.map((notification) =>
-//           notification.id === notificationId
-//             ? { ...notification, read_status: true }
-//             : notification
-//         )
+//         notifications.filter((n) => n.trade_offer_id !== tradeOfferId)
 //       );
 //     } catch (error) {
-//       console.error(
-//         "Erreur lors du marquage de la notification comme lue:",
-//         error
+//       console.error("Error accepting trade:", error);
+//     }
+//   };
+
+//   const handleRejectTrade = async (tradeOfferId: number) => {
+//     console.log(`Rejecting trade offer ${tradeOfferId}`); // Debug log
+//     try {
+//       await updateTradeStatus(tradeOfferId, "rejected");
+//       if (userId) {
+//         await sendNotification({
+//           userId,
+//           message: `L'utilisateur ${userId} a refusé la demande de troc.`,
+//           tradeOfferId,
+//         });
+//       }
+//       setNotifications(
+//         notifications.filter((n) => n.trade_offer_id !== tradeOfferId)
 //       );
+//     } catch (error) {
+//       console.error("Error rejecting trade:", error);
 //     }
 //   };
 
 //   return (
 //     <div>
-//       <h3 className="text-xl font-bold mb-4 text-teal-500">
-//         Mes Notifications
-//       </h3>
-//       <ul>
-//         {notifications.map((notification) => (
-//           <li
-//             key={notification.id}
-//             className={`bg-white shadow-md rounded-lg p-4 mb-4 ${
-//               notification.read_status ? "bg-gray-200" : "bg-white"
-//             }`}
-//           >
-//             <p>{notification.message}</p>
-//             {!notification.read_status && (
-//               <button
-//                 onClick={() => handleMarkAsRead(notification.id)}
-//                 className="btn btn-primary mt-2"
-//               >
-//                 Marquer comme lu
-//               </button>
+//       <h2>Mes Notifications</h2>
+//       {notifications.map((notification) => (
+//         <div
+//           key={notification.id}
+//           className="notification border p-4 mb-4 rounded-md shadow"
+//         >
+//           <p>{notification.message}</p>
+//           <div className="flex space-x-2 mt-2">
+//             <button
+//               onClick={() => handleMarkAsRead(notification.id)}
+//               className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
+//             >
+//               Marquer comme lu
+//             </button>
+//             {notification.trade_offer_id !== null && (
+//               <>
+//                 <button
+//                   onClick={() =>
+//                     handleAcceptTrade(notification.trade_offer_id!)
+//                   }
+//                   className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+//                 >
+//                   Accepter
+//                 </button>
+//                 <button
+//                   onClick={() =>
+//                     handleRejectTrade(notification.trade_offer_id!)
+//                   }
+//                   className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+//                 >
+//                   Refuser
+//                 </button>
+//               </>
 //             )}
-//           </li>
-//         ))}
-//       </ul>
+//           </div>
+//         </div>
+//       ))}
 //     </div>
 //   );
 // };
@@ -72,50 +121,118 @@
 // export default NotificationList;
 
 import React, { useEffect, useState } from "react";
-import { getNotificationsForUser, markNotificationAsRead } from "@/utils/api";
-import { Notification } from "@/types/types";
+import {
+  getNotificationsForUser,
+  markNotificationAsRead,
+  updateTradeStatus,
+  sendNotification,
+} from "@/utils/api";
 import { useAuth } from "@/context/AuthContext";
+import { Notification } from "@/types/types";
 
 const NotificationList: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const { userId } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     if (userId) {
       getNotificationsForUser(userId)
-        .then((data) => setNotifications(data))
-        .catch((error) => console.error(error.message));
+        .then(setNotifications)
+        .catch(console.error);
     }
   }, [userId]);
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
       await markNotificationAsRead(notificationId);
-      setNotifications((prevNotifications) =>
-        prevNotifications.filter(
-          (notification) => notification.id !== notificationId
-        )
+      if (userId) {
+        await sendNotification({
+          userId,
+          message: `Notification ${notificationId} reçue et lue.`,
+          tradeOfferId: null,
+        });
+      }
+      setNotifications(notifications.filter((n) => n.id !== notificationId));
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const handleAcceptTrade = async (tradeOfferId: number) => {
+    console.log(`Accepting trade offer ${tradeOfferId}`); // Debug log
+    try {
+      await updateTradeStatus(tradeOfferId, "accepted");
+      if (userId) {
+        await sendNotification({
+          userId,
+          message: `L'utilisateur ${userId} a accepté la demande de troc.`,
+          tradeOfferId,
+        });
+      }
+      setNotifications(
+        notifications.filter((n) => n.trade_offer_id !== tradeOfferId)
       );
     } catch (error) {
-      console.error("Error marking notification as read:", error.message);
+      console.error("Error accepting trade:", error);
+    }
+  };
+
+  const handleRejectTrade = async (tradeOfferId: number) => {
+    console.log(`Rejecting trade offer ${tradeOfferId}`); // Debug log
+    try {
+      await updateTradeStatus(tradeOfferId, "rejected");
+      if (userId) {
+        await sendNotification({
+          userId,
+          message: `L'utilisateur ${userId} a refusé la demande de troc.`,
+          tradeOfferId,
+        });
+      }
+      setNotifications(
+        notifications.filter((n) => n.trade_offer_id !== tradeOfferId)
+      );
+    } catch (error) {
+      console.error("Error rejecting trade:", error);
     }
   };
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Mes Notifications</h2>
+      <h2>Mes Notifications</h2>
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className="p-4 mb-4 bg-white shadow-md rounded-lg"
+          className="notification border p-4 mb-4 rounded-md shadow"
         >
           <p>{notification.message}</p>
-          <button
-            onClick={() => handleMarkAsRead(notification.id)}
-            className="btn btn-primary mt-2"
-          >
-            Marquer comme lu
-          </button>
+          <div className="flex space-x-2 mt-2">
+            <button
+              onClick={() => handleMarkAsRead(notification.id)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
+            >
+              Marquer comme lu
+            </button>
+            {notification.trade_offer_id !== null && (
+              <>
+                <button
+                  onClick={() =>
+                    handleAcceptTrade(notification.trade_offer_id!)
+                  }
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                >
+                  Accepter
+                </button>
+                <button
+                  onClick={() =>
+                    handleRejectTrade(notification.trade_offer_id!)
+                  }
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                >
+                  Refuser
+                </button>
+              </>
+            )}
+          </div>
         </div>
       ))}
     </div>

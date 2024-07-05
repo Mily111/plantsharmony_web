@@ -231,8 +231,8 @@ export const fetchPlantNames = async (): Promise<GenericPlant[]> => {
 
   if (response.data && Array.isArray(response.data)) {
     const plantMap = response.data.map((plant) => ({
-      id_plant: plant.id, // Utilisez la propriété correcte ici
-      name_plant: plant.name, // Utilisez la propriété correcte ici
+      id_plant: plant.id_plant, // Utilisez la propriété correcte ici
+      name_plant: plant.name_plant, // Utilisez la propriété correcte ici
     }));
     console.log("Mapped plant names:", plantMap);
     return plantMap;
@@ -471,7 +471,9 @@ export const getNotificationsForUser = async (
   userId: number
 ): Promise<Notification[]> => {
   try {
-    const response = await axios.get(`${API_URL}/notifications/user/${userId}`);
+    const response = await axios.get(
+      `${API_URL}/trades/notifications/user/${userId}`
+    );
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -513,5 +515,58 @@ export const markNotificationAsRead = async (
       console.error("Erreur inconnue:", error);
       throw new Error("Erreur inconnue");
     }
+  }
+};
+
+// Fonction pour mettre à jour le statut de la demande de troc
+export const updateTradeStatus = async (
+  tradeOfferId: number,
+  status: string
+): Promise<any> => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/trades/status/${tradeOfferId}`
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Erreur lors de la mise à jour du statut de la demande de troc:",
+        error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la mise à jour du statut de la demande de troc"
+      );
+    } else {
+      console.error("Erreur inconnue lors de la mise à jour du statut:", error);
+      throw new Error(
+        "Erreur inconnue lors de la mise à jour du statut de la demande de troc"
+      );
+    }
+  }
+};
+
+// Fonction pour envoyer une notification
+export const sendNotification = async (notificationData: {
+  userId: number;
+  message: string;
+  tradeOfferId: number | null;
+}): Promise<any> => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/notifications/create`,
+      notificationData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Erreur lors de la création de la notification:",
+      error.message
+    );
+    throw new Error(
+      error.response?.data?.message ||
+        "Erreur lors de la création de la notification"
+    );
   }
 };

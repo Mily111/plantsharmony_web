@@ -206,7 +206,7 @@ export default function Profil() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               <FontAwesomeIcon icon={faUser} className="mr-2" />
-              Nom d'utilisateur
+              Nom d utilisateur
             </label>
             {editMode ? (
               <input
@@ -304,8 +304,8 @@ export default function Profil() {
               <FontAwesomeIcon icon={faComments} />
               Mes Messages
             </h3>
-            <MessageList />
-            <MessageForm receiverId={user.id_user} />
+            {/* <MessageList />
+            <MessageForm receiverId={user.id_user} /> */}
           </div>
         </div>
       </div>

@@ -1,10 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* @import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities"; */
 
+/* Variables de couleur pour le mode clair et sombre */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -19,16 +17,7 @@
   }
 }
 
-/* body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
-
+/* Styles globaux */
 body {
   font-family: "Arial, sans-serif";
   background-color: #f4f4f4;
@@ -36,6 +25,7 @@ body {
   padding: 0;
   color: #333;
 }
+
 h1,
 h2,
 h3 {
@@ -59,8 +49,30 @@ li {
 img {
   border-radius: 8px;
 }
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Styles pour le conteneur de boutons et les boutons */
+.button-container {
+  @apply flex space-x-4 mt-4;
+}
+
+.notification-button {
+  @apply py-2 px-4 rounded-lg text-white;
+}
+
+.btn-mark-read {
+  @apply bg-blue-500 hover:bg-blue-600;
+}
+
+.btn-accept {
+  @apply bg-green-500 hover:bg-green-600;
+}
+
+.btn-reject {
+  @apply bg-red-500 hover:bg-red-600;
 }
