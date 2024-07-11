@@ -2,7 +2,7 @@
 // import {
 //   getNotificationsForUser,
 //   markNotificationAsRead,
-//   updateTradeStatus,
+//   updateTradeOfferStatus,
 //   sendNotification,
 // } from "@/utils/api";
 // import { useAuth } from "@/context/AuthContext";
@@ -21,30 +21,26 @@
 //   }, [userId]);
 
 //   const handleMarkAsRead = async (notificationId: number) => {
-//     console.log(`Marking notification ${notificationId} as read`); // Debug log
 //     try {
 //       await markNotificationAsRead(notificationId);
-//       if (userId) {
-//         await sendNotification({
-//           userId,
-//           message: `Notification ${notificationId} reçue et lue.`,
-//           tradeOfferId: null,
-//         });
-//       }
-//       setNotifications(notifications.filter((n) => n.id !== notificationId));
+//       setNotifications(
+//         notifications.filter((n) => n.id_notification !== notificationId)
+//       );
 //     } catch (error) {
 //       console.error("Error marking notification as read:", error);
 //     }
 //   };
 
 //   const handleAcceptTrade = async (tradeOfferId: number) => {
-//     console.log(`Accepting trade offer ${tradeOfferId}`); // Debug log
 //     try {
-//       await updateTradeStatus(tradeOfferId, "accepted");
-//       if (userId) {
+//       await updateTradeOfferStatus(tradeOfferId, "accepted");
+//       const notification = notifications.find(
+//         (n) => n.trade_offer_id === tradeOfferId
+//       );
+//       if (notification) {
 //         await sendNotification({
-//           userId,
-//           message: `L'utilisateur ${userId} a accepté la demande de troc.`,
+//           userId: notification.user_id, // The user who sent the trade offer
+//           message: `Votre demande de troc avec l'ID ${tradeOfferId} a été acceptée.`,
 //           tradeOfferId,
 //         });
 //       }
@@ -57,13 +53,15 @@
 //   };
 
 //   const handleRejectTrade = async (tradeOfferId: number) => {
-//     console.log(`Rejecting trade offer ${tradeOfferId}`); // Debug log
 //     try {
-//       await updateTradeStatus(tradeOfferId, "rejected");
-//       if (userId) {
+//       await updateTradeOfferStatus(tradeOfferId, "rejected");
+//       const notification = notifications.find(
+//         (n) => n.trade_offer_id === tradeOfferId
+//       );
+//       if (notification) {
 //         await sendNotification({
-//           userId,
-//           message: `L'utilisateur ${userId} a refusé la demande de troc.`,
+//           userId: notification.user_id, // The user who sent the trade offer
+//           message: `Votre demande de troc avec l'ID ${tradeOfferId} a été refusée.`,
 //           tradeOfferId,
 //         });
 //       }
@@ -80,13 +78,13 @@
 //       <h2>Mes Notifications</h2>
 //       {notifications.map((notification) => (
 //         <div
-//           key={notification.id}
+//           key={notification.id_notification}
 //           className="notification border p-4 mb-4 rounded-md shadow"
 //         >
 //           <p>{notification.message}</p>
 //           <div className="flex space-x-2 mt-2">
 //             <button
-//               onClick={() => handleMarkAsRead(notification.id)}
+//               onClick={() => handleMarkAsRead(notification.id_notification)}
 //               className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
 //             >
 //               Marquer comme lu
@@ -124,8 +122,8 @@ import React, { useEffect, useState } from "react";
 import {
   getNotificationsForUser,
   markNotificationAsRead,
-  updateTradeStatus,
-  sendNotification,
+  updateTradeOfferStatus,
+  createNotification,
 } from "@/utils/api";
 import { useAuth } from "@/context/AuthContext";
 import { Notification } from "@/types/types";
@@ -137,35 +135,39 @@ const NotificationList: React.FC = () => {
   useEffect(() => {
     if (userId) {
       getNotificationsForUser(userId)
-        .then(setNotifications)
-        .catch(console.error);
+        .then((data) => {
+          console.log("Notifications fetched:", data);
+          setNotifications(data);
+        })
+        .catch((error) =>
+          console.error("Error fetching notifications:", error)
+        );
     }
   }, [userId]);
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
+      console.log("Marking notification as read:", notificationId);
       await markNotificationAsRead(notificationId);
-      if (userId) {
-        await sendNotification({
-          userId,
-          message: `Notification ${notificationId} reçue et lue.`,
-          tradeOfferId: null,
-        });
-      }
-      setNotifications(notifications.filter((n) => n.id !== notificationId));
+      setNotifications(
+        notifications.filter((n) => n.id_notification !== notificationId)
+      );
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
   };
 
   const handleAcceptTrade = async (tradeOfferId: number) => {
-    console.log(`Accepting trade offer ${tradeOfferId}`); // Debug log
     try {
-      await updateTradeStatus(tradeOfferId, "accepted");
-      if (userId) {
-        await sendNotification({
-          userId,
-          message: `L'utilisateur ${userId} a accepté la demande de troc.`,
+      console.log("Accepting trade offer:", tradeOfferId);
+      await updateTradeOfferStatus(tradeOfferId, "accepted");
+      const notification = notifications.find(
+        (n) => n.trade_offer_id === tradeOfferId
+      );
+      if (notification) {
+        await createNotification({
+          userId: notification.user_id, // The user who sent the trade offer
+          message: `Votre demande de troc avec l'ID ${tradeOfferId} a été acceptée.`,
           tradeOfferId,
         });
       }
@@ -178,13 +180,16 @@ const NotificationList: React.FC = () => {
   };
 
   const handleRejectTrade = async (tradeOfferId: number) => {
-    console.log(`Rejecting trade offer ${tradeOfferId}`); // Debug log
     try {
+      console.log("Rejecting trade offer:", tradeOfferId);
       await updateTradeStatus(tradeOfferId, "rejected");
-      if (userId) {
-        await sendNotification({
-          userId,
-          message: `L'utilisateur ${userId} a refusé la demande de troc.`,
+      const notification = notifications.find(
+        (n) => n.trade_offer_id === tradeOfferId
+      );
+      if (notification) {
+        await createNotification({
+          userId: notification.user_id, // The user who sent the trade offer
+          message: `Votre demande de troc avec l'ID ${tradeOfferId} a été refusée.`,
           tradeOfferId,
         });
       }
@@ -201,13 +206,13 @@ const NotificationList: React.FC = () => {
       <h2>Mes Notifications</h2>
       {notifications.map((notification) => (
         <div
-          key={notification.id}
+          key={notification.id_notification}
           className="notification border p-4 mb-4 rounded-md shadow"
         >
           <p>{notification.message}</p>
           <div className="flex space-x-2 mt-2">
             <button
-              onClick={() => handleMarkAsRead(notification.id)}
+              onClick={() => handleMarkAsRead(notification.id_notification)}
               className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
             >
               Marquer comme lu

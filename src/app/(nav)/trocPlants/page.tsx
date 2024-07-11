@@ -155,6 +155,317 @@
 //   );
 // }
 
+// "use client";
+
+// import AuthMiddleware from "@/middleware/authMiddleware";
+// import React, { useEffect, useState } from "react";
+// import {
+//   getAvailablePlantsForTrade,
+//   getAvailablePlantsForUser,
+//   requestTrade,
+//   createNotification,
+// } from "@/utils/api";
+// import { SuggestedPlant } from "@/types/types";
+// import Image from "next/image";
+// import { useAuth } from "@/context/AuthContext";
+// import TradeRequestModal from "@/components/TradeRequestModal";
+
+// export default function TrocPlants() {
+//   const [plants, setPlants] = useState<SuggestedPlant[]>([]);
+//   const [userPlants, setUserPlants] = useState<SuggestedPlant[]>([]);
+//   const [selectedPlant, setSelectedPlant] = useState<SuggestedPlant | null>(
+//     null
+//   );
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const { userId } = useAuth();
+
+//   useEffect(() => {
+//     getAvailablePlantsForTrade()
+//       .then((data) => {
+//         console.log("Plants data: ", data);
+//         setPlants(data);
+//       })
+//       .catch((err: any) => {
+//         console.error(
+//           "Erreur lors de la récupération des plantes disponibles:",
+//           err.message
+//         );
+//         setError(err.message);
+//       });
+
+//     if (userId) {
+//       getAvailablePlantsForUser(userId)
+//         .then((data) => setUserPlants(data))
+//         .catch((error: any) => console.error(error.message));
+//     }
+//   }, [userId]);
+
+//   const handleRequestTrade = async (requestedPlantId: number) => {
+//     if (!selectedPlant) {
+//       alert("Veuillez sélectionner une de vos plantes pour l'échange");
+//       return;
+//     }
+//     try {
+//       if (!userId) {
+//         alert("Erreur : utilisateur non authentifié.");
+//         return;
+//       }
+//       const res = await requestTrade({
+//         requestedPlantId,
+//         userId,
+//         offeredPlantId: selectedPlant.id_plante_suggested,
+//       });
+//       if (res.message === "Trade offer created successfully") {
+//         alert("Demande de troc envoyée avec succès");
+//       } else {
+//         alert("Erreur lors de la création de la demande de troc");
+//       }
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
+//       alert("Erreur lors de la demande de troc");
+//     }
+//   };
+
+//   const handleModalSubmit = async (offeredPlantId: number) => {
+//     if (!userId) {
+//       alert("Erreur : utilisateur non authentifié.");
+//       return;
+//     }
+//     try {
+//       const res = await requestTrade({
+//         requestedPlantId: selectedPlant!.id_plante_suggested,
+//         userId,
+//         offeredPlantId,
+//       });
+//       if (res.message === "Trade offer created successfully") {
+//         const offeredPlantName = userPlants.find(
+//           (p) => p.id_plante_suggested === offeredPlantId
+//         )?.name_plant;
+//         const requestedPlantName = selectedPlant?.name_plant;
+//         const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
+//         await createNotification({
+//           userId: selectedPlant!.id_user,
+//           message: notificationMessage,
+//           tradeOfferId: res.tradeOfferId,
+//         });
+//         alert("Demande de troc envoyée avec succès");
+//         setModalVisible(false);
+//       } else {
+//         alert("Erreur lors de la création de la demande de troc");
+//       }
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
+//       alert("Erreur lors de la demande de troc");
+//     }
+//   };
+
+//   return (
+//     <AuthMiddleware>
+//       <div className="container mx-auto p-4">
+//         <h1 className="text-2xl font-bold mb-4">Demandes de troc de plantes</h1>
+//         {error ? <p className="text-red-500">{error}</p> : null}
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//           {plants.map((plant) => (
+//             <div
+//               key={plant.id_plante_suggested}
+//               className="card bg-base-100 shadow-xl mb-4"
+//             >
+//               <div className="card-body">
+//                 <h2 className="card-title">{plant.name_plant}</h2>
+//                 <div className="relative w-full h-48 mb-4">
+//                   <Image
+//                     src={`/${plant.photo}`}
+//                     alt={plant.name_plant}
+//                     layout="fill"
+//                     objectFit="cover"
+//                     className="rounded-t-lg"
+//                   />
+//                 </div>
+//                 <p>Proposé par: {plant.username}</p>
+//                 <button
+//                   onClick={() => {
+//                     setSelectedPlant(plant);
+//                     setModalVisible(true);
+//                   }}
+//                   className="btn btn-primary mt-2"
+//                 >
+//                   Demander un troc
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//         <TradeRequestModal
+//           visible={modalVisible}
+//           onCancel={() => setModalVisible(false)}
+//           onSubmit={handleModalSubmit}
+//           userId={userId as number}
+//           userPlants={userPlants}
+//         />
+//       </div>
+//     </AuthMiddleware>
+//   );
+// }
+
+// "use client";
+
+// import AuthMiddleware from "@/middleware/authMiddleware";
+// import React, { useEffect, useState } from "react";
+// import {
+//   getAvailablePlantsForTrade,
+//   getAvailablePlantsForUser,
+//   requestTrade,
+//   createNotification,
+// } from "@/utils/api";
+// import { SuggestedPlant } from "@/types/types";
+// import Image from "next/image";
+// import { useAuth } from "@/context/AuthContext";
+// import TradeRequestModal from "@/components/TradeRequestModal";
+
+// export default function TrocPlants() {
+//   const [plants, setPlants] = useState<SuggestedPlant[]>([]);
+//   const [userPlants, setUserPlants] = useState<SuggestedPlant[]>([]);
+//   const [selectedPlant, setSelectedPlant] = useState<SuggestedPlant | null>(
+//     null
+//   );
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const { userId } = useAuth();
+
+//   useEffect(() => {
+//     getAvailablePlantsForTrade()
+//       .then((data) => {
+//         console.log("Plants data: ", data);
+//         setPlants(data);
+//       })
+//       .catch((err: any) => {
+//         console.error(
+//           "Erreur lors de la récupération des plantes disponibles:",
+//           err.message
+//         );
+//         setError(err.message);
+//       });
+
+//     if (userId) {
+//       getAvailablePlantsForUser(userId)
+//         .then((data) => setUserPlants(data))
+//         .catch((error: any) => console.error(error.message));
+//     }
+//   }, [userId]);
+
+//   const handleRequestTrade = async (requestedPlantId: number) => {
+//     if (!selectedPlant) {
+//       alert("Veuillez sélectionner une de vos plantes pour l'échange");
+//       return;
+//     }
+//     try {
+//       if (!userId) {
+//         alert("Erreur : utilisateur non authentifié.");
+//         return;
+//       }
+//       const res = await requestTrade({
+//         requestedPlantId,
+//         userId,
+//         offeredPlantId: selectedPlant.id_plante_suggested,
+//       });
+//       if (res.message === "Trade offer created successfully") {
+//         alert("Demande de troc envoyée avec succès");
+//       } else {
+//         alert("Erreur lors de la création de la demande de troc");
+//       }
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
+//       alert("Erreur lors de la demande de troc");
+//     }
+//   };
+
+//   const handleModalSubmit = async (offeredPlantId: number) => {
+//     if (!userId) {
+//       alert("Erreur : utilisateur non authentifié.");
+//       return;
+//     }
+//     // Vérifiez que `selectedPlant` n'est pas `null`
+//     if (!selectedPlant) {
+//       alert("Erreur : plante sélectionnée non définie.");
+//       return;
+//     }
+//     try {
+//       const res = await requestTrade({
+//         requestedPlantId: selectedPlant.id_plante_suggested,
+//         userId,
+//         offeredPlantId,
+//       });
+//       if (res.message === "Trade offer created successfully") {
+//         const offeredPlantName = userPlants.find(
+//           (p) => p.id_plante_suggested === offeredPlantId
+//         )?.name_plant;
+//         const requestedPlantName = selectedPlant?.name_plant;
+//         const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
+//         await createNotification({
+//           userId: selectedPlant.id_user,
+//           message: notificationMessage,
+//           tradeOfferId: res.tradeOfferId,
+//         });
+//         alert("Demande de troc envoyée avec succès");
+//         setModalVisible(false);
+//       } else {
+//         alert("Erreur lors de la création de la demande de troc");
+//       }
+//     } catch (error: any) {
+//       console.error("Error requesting trade:", error.message);
+//       alert("Erreur lors de la demande de troc");
+//     }
+//   };
+
+//   return (
+//     <AuthMiddleware>
+//       <div className="container mx-auto p-4">
+//         <h1 className="text-2xl font-bold mb-4">Demandes de troc de plantes</h1>
+//         {error ? <p className="text-red-500">{error}</p> : null}
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//           {plants.map((plant) => (
+//             <div
+//               key={plant.id_plante_suggested}
+//               className="card bg-base-100 shadow-xl mb-4"
+//             >
+//               <div className="card-body">
+//                 <h2 className="card-title">{plant.name_plant}</h2>
+//                 <div className="relative w-full h-48 mb-4">
+//                   <Image
+//                     src={`/${plant.photo}`}
+//                     alt={plant.name_plant}
+//                     layout="fill"
+//                     objectFit="cover"
+//                     className="rounded-t-lg"
+//                   />
+//                 </div>
+//                 <p>Proposé par: {plant.username}</p>
+//                 <button
+//                   onClick={() => {
+//                     setSelectedPlant(plant);
+//                     setModalVisible(true);
+//                   }}
+//                   className="btn btn-primary mt-2"
+//                 >
+//                   Demander un troc
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//         <TradeRequestModal
+//           visible={modalVisible}
+//           onCancel={() => setModalVisible(false)}
+//           onSubmit={handleModalSubmit}
+//           userId={userId as number}
+//           userPlants={userPlants}
+//         />
+//       </div>
+//     </AuthMiddleware>
+//   );
+// }
+
 "use client";
 
 import AuthMiddleware from "@/middleware/authMiddleware";
@@ -201,54 +512,44 @@ export default function TrocPlants() {
     }
   }, [userId]);
 
-  const handleRequestTrade = async (requestedPlantId: number) => {
-    if (!selectedPlant) {
-      alert("Veuillez sélectionner une de vos plantes pour l'échange");
-      return;
-    }
-    try {
-      if (!userId) {
-        alert("Erreur : utilisateur non authentifié.");
-        return;
-      }
-      const res = await requestTrade({
-        requestedPlantId,
-        userId,
-        offeredPlantId: selectedPlant.id_plante_suggested,
-      });
-      if (res.message === "Trade offer created successfully") {
-        alert("Demande de troc envoyée avec succès");
-      } else {
-        alert("Erreur lors de la création de la demande de troc");
-      }
-    } catch (error: any) {
-      console.error("Error requesting trade:", error.message);
-      alert("Erreur lors de la demande de troc");
-    }
+  // const handleOpenModal = (plant: SuggestedPlant) => {
+  //   setSelectedPlant(plant);
+  //   setModalVisible(true);
+  // };
+
+  // const handleCloseModal = () => {
+  //   setModalVisible(false);
+  // };
+
+  const handleRequestTradeClick = (plant: SuggestedPlant) => {
+    console.log("Plant selected for trade:", plant);
+    setSelectedPlant(plant);
+    setModalVisible(true);
   };
 
   const handleModalSubmit = async (offeredPlantId: number) => {
+    if (!selectedPlant) {
+      alert("Veuillez sélectionner une plante pour l'échange");
+      return;
+    }
     if (!userId) {
       alert("Erreur : utilisateur non authentifié.");
       return;
     }
+
+    const tradeData = {
+      requestedPlantId: selectedPlant.Id_plante_suggested, // Utilisez la clé correcte ici
+      userId,
+      offeredPlantId,
+    };
+
+    console.log("Submitting trade request with:", tradeData);
+
     try {
-      const res = await requestTrade({
-        requestedPlantId: selectedPlant!.id_plante_suggested,
-        userId,
-        offeredPlantId,
-      });
+      const res = await requestTrade(tradeData);
+      console.log("Trade request response:", res);
+
       if (res.message === "Trade offer created successfully") {
-        const offeredPlantName = userPlants.find(
-          (p) => p.id_plante_suggested === offeredPlantId
-        )?.name_plant;
-        const requestedPlantName = selectedPlant?.name_plant;
-        const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
-        await createNotification({
-          userId: selectedPlant!.id_user,
-          message: notificationMessage,
-          tradeOfferId: res.tradeOfferId,
-        });
         alert("Demande de troc envoyée avec succès");
         setModalVisible(false);
       } else {
@@ -260,6 +561,42 @@ export default function TrocPlants() {
     }
   };
 
+  // const handleModalSubmit = async (offeredPlantId: number) => {
+  //   if (!selectedPlant) {
+  //     alert("Erreur : plante sélectionnée non définie.");
+  //     return;
+  //   }
+  //   if (!userId) {
+  //     alert("Erreur : utilisateur non authentifié.");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await requestTrade({
+  //       requestedPlantId: selectedPlant.id_plante_suggested,
+  //       userId,
+  //       offeredPlantId,
+  //     });
+  //     if (res.message === "Trade offer created successfully") {
+  //       const offeredPlantName = userPlants.find(
+  //         (p) => p.id_plante_suggested === offeredPlantId
+  //       )?.name_plant;
+  //       const requestedPlantName = selectedPlant.name_plant;
+  //       const notificationMessage = `L'utilisateur ${userId} vous demande si vous acceptez sa demande de troc : échange de ${offeredPlantName} contre ${requestedPlantName}.`;
+  //       await createNotification({
+  //         userId: selectedPlant.id_user,
+  //         message: notificationMessage,
+  //         tradeOfferId: res.tradeOfferId,
+  //       });
+  //       alert("Demande de troc envoyée avec succès");
+  //       setModalVisible(false);
+  //     } else {
+  //       alert("Erreur lors de la création de la demande de troc");
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Error requesting trade:", error.message);
+  //     alert("Erreur lors de la demande de troc");
+  //   }
+  // };
   return (
     <AuthMiddleware>
       <div className="container mx-auto p-4">
@@ -268,7 +605,7 @@ export default function TrocPlants() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plants.map((plant) => (
             <div
-              key={plant.id_plante_suggested}
+              key={plant.Id_plante_suggested}
               className="card bg-base-100 shadow-xl mb-4"
             >
               <div className="card-body">
@@ -284,10 +621,7 @@ export default function TrocPlants() {
                 </div>
                 <p>Proposé par: {plant.username}</p>
                 <button
-                  onClick={() => {
-                    setSelectedPlant(plant);
-                    setModalVisible(true);
-                  }}
+                  onClick={() => handleRequestTradeClick(plant)}
                   className="btn btn-primary mt-2"
                 >
                   Demander un troc

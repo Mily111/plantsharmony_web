@@ -1,12 +1,28 @@
 // types.ts
 
 export interface User {
-  id_user: number;
+  Id_user: number;
   username: string;
   email_user: string;
   password_user?: string;
+  Id_type_user_rights?: number;
+  isTestUser?: number;
 }
 
+export interface LoginResponse {
+  status: string;
+  message: string;
+  token?: string;
+  userId?: number;
+}
+
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  userId: number | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+  userProfile?: User | null;
+}
 export interface UpdateUserRequest {
   username?: string;
   email_user?: string;
@@ -21,15 +37,15 @@ export interface GenericPlant {
 
 // Type pour les plantes suggérées
 export interface SuggestedPlant {
-  id_plante_suggested: number;
+  Id_plante_suggested: number;
   quantity_possess: number;
   date_possess: string;
   photo: string;
   state_exchange: string;
   id_user: number;
   id_plant: number;
-  name_plant: string; // Ajouté
-  username: string; // Ajouté
+  name_plant: string;
+  username: string;
 }
 
 // Type pour les plantes avec des informations supplémentaires
@@ -57,6 +73,14 @@ export interface Trade {
   photo?: string;
   name_plant: string;
   username: string;
+  requestedPlantId?: number;
+  userId?: number;
+  offeredPlantId?: number;
+  status?: string;
+  offered_photo?: string;
+  requested_photo?: string;
+  offered_name?: string;
+  requested_name?: string;
 }
 
 // Type pour les données météo
@@ -73,18 +97,10 @@ export interface CarrouselProps {
   handleDeletePlant: (plantId: number) => void;
 }
 
-// export interface PlantCardProps {
-//   plant: {
-//     Id_plante_suggested: number;
-//     name_plant: string;
-//     photo: string;
-//     state_exchange: string;
-//     username: string;
-//   };
-// }
 export interface PlantCardProps {
   plant: SuggestedPlant;
 }
+
 // Fonction de conversion de Plant en SuggestedPlant
 export const convertPlantToSuggestedPlant = (plant: Plant): SuggestedPlant => {
   return {
@@ -96,20 +112,9 @@ export const convertPlantToSuggestedPlant = (plant: Plant): SuggestedPlant => {
     id_user: 1, // valeur par défaut ou autre logique
     id_plant: plant.id_plant || 0,
     name_plant: plant.name_plant,
+    username: plant.username || "",
   };
 };
-
-export interface Trade {
-  Id_request: number;
-  requestedPlantId: number;
-  userId: number;
-  offeredPlantId: number;
-  status: string;
-  offered_photo: string;
-  requested_photo: string;
-  offered_name: string;
-  requested_name: string;
-}
 
 export interface TradeRequestModalProps {
   visible: boolean;
@@ -130,7 +135,7 @@ export interface Message {
 }
 
 export interface Notification {
-  id: number;
+  id_notification: number;
   user_id: number;
   message: string;
   trade_offer_id: number | null;
