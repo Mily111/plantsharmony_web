@@ -19,10 +19,16 @@ export interface LoginResponse {
 export interface AuthContextType {
   isAuthenticated: boolean;
   userId: number | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (
+    username: string,
+    password: string,
+    csrfToken: string
+  ) => Promise<void>;
   logout: () => void;
-  userProfile?: User | null;
+  userProfile: User | null | undefined;
+  csrfToken: string;
 }
+
 export interface UpdateUserRequest {
   username?: string;
   email_user?: string;
@@ -81,6 +87,9 @@ export interface Trade {
   requested_photo?: string;
   offered_name?: string;
   requested_name?: string;
+  receiver_name?: string;
+  offered_plant_name?: string;
+  requested_plant_name?: string;
 }
 
 // Type pour les données météo
@@ -140,4 +149,7 @@ export interface Notification {
   message: string;
   trade_offer_id: number | null;
   read_status: boolean;
+  offered_plant_name?: string;
+  requested_plant_name?: string;
+  receiver_name?: string;
 }
